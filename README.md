@@ -1,9 +1,6 @@
-<<<<<<< HEAD
 # gene-level fine mapping
 
-A [workflowr][] project.
+https://github.com/yunqiyang0215/gene_level_fine_mapping
 
-[workflowr]: https://github.com/jdblischak/workflowr
-=======
-# gene_level_fine_mapping
->>>>>>> master
+
+
