@@ -1,0 +1,60 @@
+---
+title: "eQTL data processing"
+author: "Yunqi Yang"
+date: "7/1/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r  eval = FALSE}
+# unix command 
+srun --pty --mem 5G -t 01:00:00 /bin/bash
+module load R
+R
+
+```
+
+
+
+```{r  eval = FALSE}
+
+setwd("/home/yunqiyang/summer_rotation/whole_blood_eqtl")
+dt = read.table("Whole_Blood.variants_pip.txt", header = TRUE)
+
+dim(dt) # 420370 6
+sum(is.na(dt)) # 0
+```
+
+
+
+```{r  eval = FALSE}
+
+setEPS()
+postscript("pip_summary.eps")
+hist(dt$pip)
+dev.off()
+
+```
+
+```{r eval = FALSE}
+
+length(unique(dt$gene)) # 15252
+sum(dt$pip>0.5) # 5080
+sum(dt$pip>0.8) # 2751
+sum(dt$pip>0.1) # 28559
+
+```
+
+```{r eval = FALSE}
+
+# save data 
+dt_pos = dt[dt$pip>0.5, ]
+dt_neg = dt[-(dt$pip>0.5), ]
+
+save(dt_pos, file = 'SNPs_causal.RData')
+save(dt_neg, file = 'SNPs_control.RData')
+
+```
+
+
