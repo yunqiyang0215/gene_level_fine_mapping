@@ -7,6 +7,7 @@ output:
   pdf_document: default
 ---
 
+## create positive gene-SNP set
 ```{r  eval = FALSE}
 # unix command 
 srun --pty --mem 5G -t 01:00:00 /bin/bash
@@ -14,8 +15,6 @@ module load R
 R
 
 ```
-
-
 
 ```{r  eval = FALSE}
 
@@ -25,8 +24,6 @@ dt = read.table("Whole_Blood.variants_pip.txt", header = TRUE)
 dim(dt) # 420370 6
 sum(is.na(dt)) # 0
 ```
-
-
 
 ```{r  eval = FALSE}
 
@@ -57,4 +54,61 @@ save(dt_neg, file = 'SNPs_control.RData')
 
 ```
 
+
+
+## processing gene-SNP positive set
+```{r  }
+
+# load fine-mapping positive set
+load("/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/SNPs_causal.RData")
+
+```
+
+
+### split snp info into multiple columns
+```{r  }
+
+dt_pos$variant_id = as.character(dt_pos$variant_id)
+var_position = strsplit(dt_pos$variant_id, '_')
+
+chr = rep(NA, length(var_position))
+SNP_loc = rep(NA, length(var_position))
+  
+for (i in 1:length(var_position)){
+  chr[i] = var_position[[i]][1]
+  SNP_loc[i] = var_position[[i]][2]
+}
+
+
+
+```
+
+```{r  }
+
+chr = unlist(lapply(var_position, function(x) x[1]))
+dt_pos$SNP_chr = gsub('\\D','', chr)
+dt_pos$SNP_loc = unlist(lapply(var_position, function(x) x[2]))
+
+```
+
+### create gene_id without gene version number
+```{r  }
+
+gene_seg = strsplit(as.character(dt_pos$gene), '.', fixed = TRUE)
+dt_pos$gene_id = unlist(lapply(gene_seg, function(x) x[1]))
+
+```
+
+
+```{r  }
+
+head(dt_pos)
+
+```
+
+```{r  }
+
+save(dt_pos, file = 'dt_pos_processed.RData')
+
+```
 
