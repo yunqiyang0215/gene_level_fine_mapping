@@ -1,0 +1,87 @@
+---
+title: "loci_annotation"
+author: "Yunqi Yang"
+date: "7/6/2020"
+output: html_document
+---
+
+
+```{r knitr, echo=FALSE}
+knitr::opts_chunk$set(comment = "#",results = "hold",collapse = TRUE,
+                      fig.align = "center")
+```
+
+
+```{r  eval = FALSE}
+
+setwd('/Library/Frameworks/R.framework/Versions/3.6/Resources/library/')
+devtools::install(pkg = "XML")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
+
+BiocManager::install(c("GenomicFeatures", "AnnotationDbi", 'rtracklayer'))
+
+```
+
+```{r  }
+
+library(rtracklayer)
+
+```
+
+```{r  }
+
+# load fine-mapping positive set
+load("/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/dt_pos_processed.RData")
+
+dt = import("/Users/nicholeyang/Desktop/Rotation2/data/Homo_sapiens.GRCh38.100.gtf")
+dt = as.data.frame(dt)
+
+```
+
+```{r  }
+
+head(dt_pos)
+
+```
+
+## find the gene coordinate in the positive set 
+```{r  }
+
+## subset to type = gene
+hsgene = dt[dt$type == 'gene', ]
+head(hsgene)
+
+```
+
+
+```{r  }
+
+## obtain the gene coordinates
+pos_gene_coor = hsgene[which(hsgene$gene_id == dt_pos$gene_id[1]), c('gene_id','gene_name','seqnames', 'start', 'end', 'width')]
+
+for (i in 2:length(dt_pos$gene_id)){
+  pos_gene_coor = rbind(pos_gene_coor, hsgene[which(hsgene$gene_id == dt_pos$gene_id[i]), c('gene_id','gene_name','seqnames', 'start', 'end', 'width')])
+}
+
+```
+
+```{r  }
+
+
+dt_pos2 = merge(dt_pos, pos_gene_coor, by = 'gene_id')
+dt_pos3 = dt_pos2[!duplicated(dt_pos2), ]
+
+head(dt_pos3)
+
+```
+
+```{r  }
+
+save(dt_pos3, file = 'dt_pos3.RData')
+
+
+```
+
