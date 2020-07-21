@@ -1,0 +1,201 @@
+---
+title: "create training data"
+author: "Yunqi Yang"
+date: "7/16/2020"
+output: html_document
+---
+
+
+## annotation result summary
+```{r  }
+
+annov_merged = read.csv("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/dt_annov_merged.csv")
+
+```
+
+```{r  }
+
+head(annov_merged)
+
+```
+
+
+### summarizing by categories
+```{r  }
+
+categ = unique(annov_merged$snp_func)
+categ
+
+```
+
+```{r  }
+obs = rep(NA, length(categ))
+
+for (i in 1:length(obs)){
+  obs[i] = sum(annov_merged$snp_func == categ[i])
+}
+
+barplot(obs, names.arg = c(as.character(categ)), cex.names=0.7, las = 2, ylab = 'counts')
+```
+
+
+## create features: UTR5/UTR3/exon/intron/upstream
+
+1. Remove feature categories: 'UTR5;UTR3', 'ncRNA_intronic', 'ncRNA_exonic', 'upstream;downstream' for simplification
+2. Remove '.', which means no annotation found 
+```{r  }
+
+train = annov_merged[annov_merged$snp_func != 'UTR5;UTR3' & annov_merged$snp_func != 'ncRNA_intronic' &
+                        annov_merged$snp_func != 'ncRNA_exonic' & annov_merged$snp_func != 'upstream;downstream' &
+                     annov_merged$snp_func != '.', ]
+
+
+## some snps have 2 reference genes 
+refgenes = strsplit(as.character(train$snp_refgene), ';')   
+train$refgene1 = unlist(lapply(refgenes, function(x) x[1]))
+train$refgene2 = unlist(lapply(refgenes, function(x) x[2]))
+train$refgene2[is.na(train$refgene2)] = '999'
+
+
+train2 = train[, c('gene_id','gene_name', 'variant_id', 'snp_func', 
+                   'snp_refgene', 'refgene_detail', 'refgene1', 'refgene2', 'tss_dist_to_snp')]
+
+
+```
+
+## two situations: whether associated genes = reference genes 
+```{r  }
+
+## 1. gene-snp pairs where associated gene = reference gene
+sub_train1 = train2[as.character(train2$gene_name) == train2$refgene1 | as.character(train2$gene_name) == train2$refgene2, ]
+
+
+## 2. gene-snp pairs where associated gene != reference gene
+sub_train2 = train2[as.character(train2$gene_name) != train2$refgene1 & 
+                      as.character(train2$gene_name) != train2$refgene2, ]
+
+
+```
+
+
+## create positive training set
+```{r  }
+
+pos1 = sub_train1
+pos1$UTR5 = ifelse(pos1$snp_func == 'UTR5', 1, 0)
+pos1$UTR3 = ifelse(pos1$snp_func == 'UTR3', 1, 0)
+pos1$exon = ifelse(pos1$snp_func == 'exonic', 1, 0)
+pos1$intron = ifelse(pos1$snp_func == 'intronic', 1, 0)
+pos1$upstream = ifelse(pos1$snp_func == 'upstream', 1, 0)
+
+pos2 = sub_train2
+pos2$UTR5 = rep(0, dim(pos2)[1])
+pos2$UTR3 = rep(0, dim(pos2)[1])
+pos2$exon = rep(0, dim(pos2)[1])
+pos2$intron = rep(0, dim(pos2)[1])
+pos2$upstream = rep(0, dim(pos2)[1])
+
+train_pos = rbind(pos1, pos2)
+train_pos$y = rep(1, dim(train_pos)[1])
+```
+
+
+
+
+## create negative training set: two sources 
+
+1. In positive set, for a snp where associated gene is not the reference gene. Then reference gene-snp will be the gene-snp pair. 
+
+2. the genes within 1mb of all the unique snps in the positive set. 
+
+```{r  }
+
+## source1: e.g. geneA associated with snpA, but snpA reference to geneB. geneB-snpA is a negative gene-snp pair here
+
+neg1 = sub_train2
+neg1$UTR5 = ifelse(neg1$snp_func == 'UTR5', 1, 0)
+neg1$UTR3 = ifelse(neg1$snp_func == 'UTR3', 1, 0)
+neg1$exon = ifelse(neg1$snp_func == 'exonic', 1, 0)
+neg1$intron = ifelse(neg1$snp_func == 'intronic', 1, 0)
+neg1$upstream = ifelse(neg1$snp_func == 'upstream', 1, 0)
+
+neg1$y = rep(0, dim(neg1)[1])
+```
+
+
+```{r  }
+
+load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/dt_neg_tss.RData")
+head(dt_neg_tss)
+
+```
+
+
+```{r  }
+
+
+## find the genes within 1mb for the unique snp set. 
+unique_snp = unique(as.character(train2$variant_id))
+indx = unlist(lapply(unique_snp, function(x) which(dt_neg_tss$var_id == x)))
+neg2 = dt_neg_tss[indx, ]
+
+```
+
+
+
+```{r  }
+
+## remove the gene-snp pairs already in the negative set1. 
+neg2_remove_indx = c()
+
+for (i in 1:dim(sub_train2)[1]){
+  
+  gene_name = sub_train2[i, ]$refgene1
+  snp_id = sub_train2[i, ]$variant_id
+  
+  indx = which(as.character(neg2$gene_name) == as.character(gene_name) & as.character(neg2$var_id) == as.character(snp_id))
+  neg2_remove_indx = c(neg2_remove_indx, indx)
+}
+
+```
+
+
+```{r  }
+
+neg2 = neg2[-neg2_remove_indx, ]
+neg2$UTR5 = rep(0, dim(neg2)[1])
+neg2$UTR3 = rep(0, dim(neg2)[1])
+neg2$exon = rep(0, dim(neg2)[1])
+neg2$intron = rep(0, dim(neg2)[1])
+neg2$upstream = rep(0, dim(neg2)[1])
+neg2$y = rep(0, dim(neg2)[1])
+
+```
+
+```{r  }
+
+train_pos_all = train_pos[, c('gene_name', 'variant_id', "UTR5", "UTR3", "exon", 
+                              "intron", "upstream", 'tss_dist_to_snp', "y")]
+
+
+sub_train_neg1 = neg1[, c('snp_refgene', 'variant_id', "UTR5", "UTR3", "exon", 
+                              "intron", "upstream", 'tss_dist_to_snp', "y")]
+
+colnames(sub_train_neg1) = c('gene_name', 'variant_id', "UTR5", "UTR3", "exon", 
+                              "intron", "upstream", 'tss_dist_to_snp', "y")
+
+sub_train_neg2 = neg2[, c('gene_name', 'var_id', "UTR5", "UTR3", "exon", 
+                              "intron", "upstream", 'dist_to_snp', "y")]
+
+colnames(sub_train_neg2) = c('gene_name', 'variant_id', "UTR5", "UTR3", "exon", 
+                              "intron", "upstream", 'tss_dist_to_snp', "y")
+
+
+train_neg_all = rbind(sub_train_neg1, sub_train_neg2)
+
+# save(train_pos_all, train_neg_all, file = 'training.RData')
+```
+
+
+
+
