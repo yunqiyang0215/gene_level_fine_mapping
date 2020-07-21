@@ -11,3 +11,7 @@ editor_options:
 Welcome to my research website. Follow the links below to browse the results.
 
 + [eQTL data processing](eqtl_process.html)
+
++ [Create training data](create_training_set.html)
+
++ [Model fitting](model_fitting.html)
