@@ -1,0 +1,148 @@
+---
+title: "model_fitting"
+author: "Yunqi Yang"
+date: "7/17/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r  }
+
+load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/training.RData")
+
+```
+
+```{r  }
+
+## remove NAs
+dat = rbind(train_pos_all, train_neg_all)
+NAs = apply(dat, 1, function(x) sum(is.na(x)))
+dat = dat[NAs == 0, ]
+
+
+```
+
+```{r  }
+
+head(dat)
+
+```
+
+
+## proportion of features 
+
+```{r  }
+par(mfrow = c(1,2))
+
+# proportion of features in the positive set
+tot_count = apply(dat[dat$y==1, c(3:7)], 2, function(x) sum(x == 1))
+barplot(tot_count/dim(dat[dat$y==1, ])[1], las = 2, main = 'feature proportion in positive set')
+
+# proportion of features in the negative set
+tot_count = apply(dat[dat$y==0, c(3:7)], 2, function(x) sum(x == 1))
+barplot(tot_count/dim(dat[dat$y==0, ])[1], ylim = c(0, 0.01), las = 2, main = 'feature proportion in negative set')
+
+```
+
+## by variable logistic regression
+```{r  }
+
+fit1  = glm(y ~ UTR5, data = dat, family = "binomial")
+fit2 = glm(y ~ UTR3, data = dat, family = "binomial")
+fit3 = glm(y ~ exon, data = dat, family = "binomial")
+fit4 = glm(y ~ intron, data = dat, family = "binomial")
+fit5 = glm(y ~ upstream, data = dat, family = "binomial")
+
+
+summary(fit1)
+summary(fit2)
+summary(fit3)
+summary(fit4)
+summary(fit5)
+```
+
+
+## fit all features
+```{r }
+
+fit6 = glm(y ~ UTR5 + intron + upstream + exon, data = dat, family = "binomial")
+summary(fit6)
+
+fit7 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon, data = dat, family = "binomial")
+summary(fit7)
+
+```
+
+## AIC criteria and deviance: the smaller the better
+$$AIC=-2\log L(\theta)+2k$$
+$$deviance=-2\log L(\theta)$$
+
+
+## calculate prediction accuracy: train-test split
+
+```{r  }
+
+set.seed(1)
+n = dim(dat)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat[indx, ]
+test = dat[-indx, ]
+
+```
+
+```{r  }
+
+# build model on the training set
+fit.all = glm(y ~ UTR5 + UTR3 + intron + upstream + exon, data = train, family = "binomial")
+
+# evaluate on the test set 
+pred.probs=predict(fit.all,test,type="response")
+
+
+```
+
+```{r  }
+
+plot(pred.probs, type = 'p', pch = '.')
+
+```
+
+
+
+### classification accuracy
+```{r  }
+
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+
+
+
+### plot ROC-AUC PR-AUC
+```{r  }
+
+#install.packages("PRROC")
+require(PRROC)
+
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
