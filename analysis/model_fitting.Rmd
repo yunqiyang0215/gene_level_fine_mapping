@@ -9,6 +9,15 @@ output:
 
 ```{r  }
 
+library(ggplot2)
+library(dplyr)
+require(PRROC)
+
+```
+
+
+```{r  }
+
 load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/training.RData")
 
 ```
@@ -23,9 +32,21 @@ dat = dat[NAs == 0, ]
 
 ```
 
+
+## data overview
 ```{r  }
 
 head(dat)
+
+```
+
+```{r  }
+
+# number of observations in the dataset 
+dim(dat)[1]
+
+sum(dat$y == 1)  # positive pairs
+sum(dat$y == 0)  # negative pairs 
 
 ```
 
@@ -120,15 +141,7 @@ table(glm.pred, test$y)
 
 
 
-
 ### plot ROC-AUC PR-AUC
-```{r  }
-
-#install.packages("PRROC")
-require(PRROC)
-
-```
-
 ```{r  }
 
 fg <- pred.probs[test$y == 1]
@@ -145,4 +158,107 @@ plot(pr)
 ```
 
 
+## play around tss feature 
 
+```{r  }
+
+summary(dat$tss_dist_to_snp)
+summary(dat[dat$y==1, ]$tss_dist_to_snp)  # dist_to_tss in positive set 
+summary(dat[dat$y==0, ]$tss_dist_to_snp)  # dist_to_tss in negative set 
+
+```
+
+```{r  }
+
+# change fill and outline color manually 
+ggplot(dat, aes(x = tss_dist_to_snp)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+
+
+
+boxplot(tss_dist_to_snp ~ y, data = dat)
+
+
+```
+
+
+### exponential decay: exp(-d/sigma) 
+
+```{r  }
+
+sigma = 1e5
+dat$weight = exp(-dat$tss_dist_to_snp/sigma)
+
+```
+
+```{r  }
+
+# change fill and outline color manually 
+ggplot(dat, aes(x = weight)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+
+
+
+boxplot(weight ~ y, data = dat)
+
+
+```
+
+
+```{r  }
+
+# fit raw tss
+fit.raw.tss  = glm(y ~ tss_dist_to_snp, data = dat, family = "binomial")
+summary(fit.raw.tss)
+
+
+# fit exponential decay: 
+fit.exp.tss  = glm(y ~ weight, data = dat, family = "binomial")
+summary(fit.exp.tss)
+
+```
+
+
+## add weight to all feature logsitic regression and plot ROC/PR-AUC 
+
+```{r  }
+
+# split data in the same way
+set.seed(1)
+n = dim(dat)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat[indx, ]
+test = dat[-indx, ]
+
+# fit model and evaluate performance
+fit.all = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight, data = train, family = "binomial")
+summary(fit.all)
+
+pred.probs=predict(fit.all,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+```
+
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
