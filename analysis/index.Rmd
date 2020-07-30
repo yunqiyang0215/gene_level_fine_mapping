@@ -15,3 +15,5 @@ Welcome to my research website. Follow the links below to browse the results.
 + [Create training data](create_training_set.html)
 
 + [Model fitting](model_fitting.html)
+
++ [Distance function](dist_functions.html)
