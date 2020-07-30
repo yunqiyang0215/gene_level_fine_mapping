@@ -1,0 +1,482 @@
+---
+title: "distance function"
+author: "Yunqi Yang"
+date: "7/29/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Comment:
+
+1. Tried exponential decay function and gaussian decay function with 4 different sigma values. I think sigma values and which decay function to use don't have large impact on the ROC and PR curve. 
+
+2. However, the coefficient for 'weight' variable changes a lot when vary sigma values. We might want to use a sigma value based on the shape of the decay curve, which one looks more reasonable in terms of biology. 
+
+
+```{r  }
+
+library(ggplot2)
+library(dplyr)
+require(PRROC)
+
+```
+
+
+```{r  }
+
+load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/training.RData")
+
+```
+
+```{r  }
+
+## remove NAs
+dat = rbind(train_pos_all, train_neg_all)
+NAs = apply(dat, 1, function(x) sum(is.na(x)))
+dat = dat[NAs == 0, ]
+
+
+```
+
+
+## data overview
+```{r  }
+
+head(dat)
+
+```
+
+```{r  }
+
+# number of observations in the dataset 
+dim(dat)[1]
+
+sum(dat$y == 1)  # positive pairs
+sum(dat$y == 0)  # negative pairs 
+
+```
+
+
+## proportion of features 
+
+```{r  }
+par(mfrow = c(1,2))
+
+# proportion of features in the positive set
+tot_count = apply(dat[dat$y==1, c(3:7)], 2, function(x) sum(x == 1))
+barplot(tot_count/dim(dat[dat$y==1, ])[1], las = 2, main = 'feature proportion in positive set')
+
+# proportion of features in the negative set
+tot_count = apply(dat[dat$y==0, c(3:7)], 2, function(x) sum(x == 1))
+barplot(tot_count/dim(dat[dat$y==0, ])[1], ylim = c(0, 0.01), las = 2, main = 'feature proportion in negative set')
+
+```
+
+
+## play around tss feature 
+```{r  }
+
+summary(dat$tss_dist_to_snp)
+summary(dat[dat$y==1, ]$tss_dist_to_snp)  # dist_to_tss in positive set 
+summary(dat[dat$y==0, ]$tss_dist_to_snp)  # dist_to_tss in negative set 
+
+```
+
+
+### two decay functions: exponential decay and gaussian decay. 
+
+the decay functions look like under the distance range we have. 
+
+```{r  }
+
+gaussian_decay = function(sigma, d){
+  k = exp(-d^2/sigma^2/2)
+  return(k)
+}
+  
+exp_decay = function(sigma, d){
+  k = exp(-d/sigma)
+  return(k)
+}
+  
+```
+
+
+```{r  }
+
+dist = seq(0, 2e7, by = 1e3)
+sigmas = c(1e4, 1e5, 1e6, 1e7)
+
+par(mfrow = c(2,2))
+plot(gaussian_decay(sigmas[1], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(gaussian_decay(sigmas[2], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(gaussian_decay(sigmas[3], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(gaussian_decay(sigmas[4], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+
+
+par(mfrow = c(2,2))
+plot(exp_decay(sigmas[1], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(exp_decay(sigmas[2], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(exp_decay(sigmas[3], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+plot(exp_decay(sigmas[4], dist), type = 'l', ylab = 'weight', xlab = 'distance')
+
+```
+
+
+
+
+## exponential decay: exp(-d/sigma) 
+
+```{r  }
+
+weights = matrix(NA, ncol = length(sigmas), nrow = dim(dat)[1])
+
+for (i in 1:length(sigmas)){
+  weights[, i] = exp(-dat$tss_dist_to_snp/sigmas[i])
+}
+
+weights = data.frame(weights)
+colnames(weights) = c('sig1', 'sig2', 'sig3', 'sig4')
+
+
+dat2 = cbind(dat, weights)
+
+```
+
+
+
+
+```{r  }
+
+
+ggplot(dat2, aes(x = sig1)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+ggplot(dat2, aes(x = sig2)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+ggplot(dat2, aes(x = sig3)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+
+
+ggplot(dat2, aes(x = sig4)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+```
+
+
+
+### add weight to all feature logsitic regression and plot ROC/PR-AUC 
+
+```{r  }
+
+# split data in the same way
+set.seed(1)
+n = dim(dat2)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat2[indx, ]
+test = dat2[-indx, ]
+
+
+```
+
+```{r  }
+
+# fit model and evaluate performance
+fit.sig1 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig1, data = train, family = "binomial")
+fit.sig2 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig2, data = train, family = "binomial")
+fit.sig3 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig3, data = train, family = "binomial")
+fit.sig4 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig4, data = train, family = "binomial")
+
+
+summary(fit.sig1)
+summary(fit.sig2)
+summary(fit.sig3)
+summary(fit.sig4)
+
+```
+
+```{r  }
+
+## sigma1
+pred.probs=predict(fit.sig1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+## sigma2
+pred.probs=predict(fit.sig2,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+## sigma3
+pred.probs=predict(fit.sig3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+## sigma4
+pred.probs=predict(fit.sig4,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+## change to gaussian decay function: $exp(-d^2/2l^2)$
+
+```{r  }
+
+weights = matrix(NA, ncol = length(sigmas), nrow = dim(dat)[1])
+
+for (i in 1:length(sigmas)){
+  weights[, i] = exp(-dat$tss_dist_to_snp^2/sigmas[i]^2)
+}
+
+weights = data.frame(weights)
+colnames(weights) = c('sig1', 'sig2', 'sig3', 'sig4')
+```
+
+
+```{r  }
+
+dat2 = cbind(dat, weights)
+
+```
+
+```{r  }
+
+
+ggplot(dat2, aes(x = sig1)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+ggplot(dat2, aes(x = sig2)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+ggplot(dat2, aes(x = sig3)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+
+ggplot(dat2, aes(x = sig4)) +
+  geom_histogram(aes(color = as.factor(y), fill = as.factor(y)), 
+                position = "identity", bins = 50, alpha = 0.4) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  
+
+
+```
+
+
+### add weight to all feature logsitic regression and plot ROC/PR-AUC 
+
+```{r  }
+
+# split data in the same way
+set.seed(1)
+n = dim(dat2)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat2[indx, ]
+test = dat2[-indx, ]
+
+
+```
+
+```{r  }
+
+# fit model and evaluate performance
+fit.sig1 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig1, data = train, family = "binomial")
+fit.sig2 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig2, data = train, family = "binomial")
+fit.sig3 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig3, data = train, family = "binomial")
+fit.sig4 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + sig4, data = train, family = "binomial")
+
+
+summary(fit.sig1)
+summary(fit.sig2)
+summary(fit.sig3)
+summary(fit.sig4)
+
+```
+
+```{r  }
+
+## sigma1
+pred.probs=predict(fit.sig1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+## sigma2
+pred.probs=predict(fit.sig2,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+## sigma3
+pred.probs=predict(fit.sig3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+```{r  }
+
+## sigma4
+pred.probs=predict(fit.sig3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+
+
+
