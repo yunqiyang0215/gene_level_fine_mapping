@@ -1,0 +1,142 @@
+---
+title: "prepare_hic_feature"
+author: "Yunqi Yang"
+date: "8/4/2020"
+output: html_document
+---
+
+
+
+## prepare for HiC feature 
+```{r  }
+
+load("/Users/nicholeyang/Desktop/Rotation2/data/hic_eqtl.RData")
+
+```
+
+
+```{r  }
+
+hic_eqtl2 = hic_eqtl[!is.na(hic_eqtl$baitName), ]
+
+
+bait_gene = strsplit(as.character(hic_eqtl2$baitName), ';')
+ngenes = lapply(bait_gene, function(x) length(x))
+
+index_list = c()
+for(i in 1:dim(hic_eqtl2)[1]){
+  index = rep(i, ngenes[[i]])
+  index_list = c(index_list, index)
+}
+
+hic_eqtl3 = hic_eqtl2[index_list, ]
+hic_eqtl3$bait_gene = unlist(bait_gene)
+
+```
+
+
+## load training data
+```{r  }
+
+load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/training.RData")
+
+## remove NAs
+dat = rbind(train_pos_all, train_neg_all)
+NAs = apply(dat, 1, function(x) sum(is.na(x)))
+dat = dat[NAs == 0, ]
+
+```
+
+
+```{r  }
+var_loc = strsplit(as.character(dat$variant_id), '_')
+dat$snp_loc38 =  paste(unlist(lapply(var_loc, function(x) x[1])), unlist(lapply(var_loc, function(x) x[2])), sep = ':')
+```
+
+
+```{r }
+
+var_loc = strsplit(as.character(hic_eqtl3$loc_38map), '-')
+hic_eqtl3$snp_loc38 = unlist(lapply(var_loc, function(x) x[1]))
+
+```
+
+
+## merge the previous training data and the hic feature 
+```{r  }
+
+## restrict to coding gene
+coding_gene_list = read.table('/Users/nicholeyang/Desktop/Rotation2/data/coding_gene_list.txt', header = TRUE)
+
+coding_gene_list$bait_gene = coding_gene_list$Approved_symbol
+hic_eqtl4 = merge(coding_gene_list, hic_eqtl3, by = 'bait_gene', all = FALSE)
+
+colnames(hic_eqtl4)[1] = 'gene_name'
+```
+
+
+```{r  }
+
+tail(dat)
+```
+
+
+## check if any training gene-snp pairs in the hic data: ~250 gene-snp pairs are in the positive set. 
+
+Among all the gene-snp pairs, ~9500 hic features are added. 
+```{r  }
+
+index_in_hic = c()
+
+
+for(i in 1:dim(dat)[1]){
+  
+  index = which(dat[i, ]$gene_name == hic_eqtl4$gene_name & dat[i, ]$snp_loc38 == hic_eqtl4$snp_loc38)
+  index_in_hic = c(index_in_hic, index)
+}
+
+
+train_hic = hic_eqtl4[index_in_hic, c("gene_name", "Mon", "Mac0", "Mac1",  "Mac2", "Neu",
+                                         "MK", "EP", "Ery", "FoeT", "nCD4", "tCD4", "aCD4",          
+                                         "naCD4", "nCD8", "tCD8", "nB", "tB","snp_loc38")]
+
+dat_add_hic = merge(dat, train_hic, by = c('gene_name', 'snp_loc38'), all = TRUE)
+```
+
+```{r }
+
+## check NAs
+Nas = apply(dat_add_hic, 2, function(x) sum(is.na(x)))
+Nas
+
+## replace NAs with 0
+dat_add_hic[is.na(dat_add_hic)] <- 0
+```
+
+
+```{r  }
+
+## binary the hic features
+
+cols = c("Mon", "Mac0", "Mac1",  "Mac2", "Neu", "MK", "EP", "Ery", "FoeT",
+         "nCD4", "tCD4", "aCD4", "naCD4", "nCD8", "tCD8", "nB", "tB")
+
+
+for( i in 1:length(cols)){
+  
+  dat_add_hic[, cols[i]] = ifelse(as.numeric(as.character(dat_add_hic[, cols[i]])) >=5, 1, 0)
+  
+  
+}
+
+save(dat_add_hic, file = '/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RData')
+```
+
+
+
+
+
+
+
+
+
