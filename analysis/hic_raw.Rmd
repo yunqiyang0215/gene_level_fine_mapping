@@ -1,0 +1,103 @@
+---
+title: "hic_raw"
+author: "Yunqi Yang"
+date: "8/3/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## Description: 
+
+This file is to merge the HiC cutoff5.txt file with the eqtl file. 
+```{r  }
+
+HiC = read.delim2('/Users/nicholeyang/Desktop/Rotation2/data/phic/PCHiC_peak_matrix_cutoff5.txt', 
+                  header = TRUE, sep="\t", quote = '')
+
+```
+
+```{r  }
+
+head(HiC)
+
+```
+
+```{r }
+
+dim(HiC)[1]
+
+
+```
+
+## load the converted file 
+```{r  }
+
+snps = read.csv("/Users/nicholeyang/Desktop/Rotation2/data/hglft_genome_38to19.bed", header = FALSE)
+snp38 = read.csv('/Users/nicholeyang/Desktop/Rotation2/data/snps.txt', header = FALSE)
+
+x = strsplit(as.character(snps$V1), '-')
+x2 = unlist(lapply(x, function(y) y[1]))
+
+snp_info = strsplit(x2, ':')
+
+chr = unlist(lapply(snp_info, function(x) x[1]))
+start = unlist(lapply(snp_info, function(x) x[2]))
+
+dat_snp = data.frame(cbind(chr, start, as.character(snp38$V1)))
+colnames(dat_snp) = c('chr', 'start', 'loc_38map')
+
+```
+
+```{r  }
+
+head(dat_snp)
+
+```
+
+
+```{r  }
+
+dat_snp$chr = gsub('\\D','', dat_snp$chr)
+dat_snp$start = as.numeric(as.character(dat_snp$start))
+
+
+
+
+index_list = c()
+index = which((HiC$oeChr == dat_snp$chr[1]) & (HiC$oeStart < dat_snp$start[1]) & (HiC$oeEnd > dat_snp$start[1]))
+
+df_snps = apply(dat_snp[1, ], 2, function(co) rep(co, each = length(index)))
+index_list = c(index_list, index)
+
+
+
+for(i in 2:dim(dat_snp)[1]){
+  
+  index = which((HiC$oeChr == dat_snp$chr[i]) & (HiC$oeStart < dat_snp$start[i]) & (HiC$oeEnd > dat_snp$start[i]))
+  index_list = c(index_list, index)
+  snps = apply(dat_snp[i, ], 2, function(co) rep(co, each = length(index)))
+  df_snps = rbind(df_snps, snps)
+}
+
+```
+
+
+```{r  }
+
+hic_eqtl = cbind(df_snps, HiC[index_list, ])
+
+row.names(hic_eqtl) = seq(1:dim(hic_eqtl)[1])
+
+save(hic_eqtl, file = '/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/hic_eqtl.RData')
+
+```
+
+
+
+
+
+
+
+
+
