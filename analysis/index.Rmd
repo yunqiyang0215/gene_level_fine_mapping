@@ -21,3 +21,5 @@ Welcome to my research website. Follow the links below to browse the results.
 + [Process HiC data](hic_raw.html)
 
 + [Add HiC feature to training data](add_hic_feature.html)
+
++ [Model HiC data](model_hic.html)
