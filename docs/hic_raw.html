@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Yunqi Yang" />
+
+
+<title>hic_raw</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">gene-level fine mapping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">hic_raw</h1>
+<h4 class="author">Yunqi Yang</h4>
+<h4 class="date">8/3/2020</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-08-05
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>gene_level_fine_mapping/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200622code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200622)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200622code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200622)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/hic_eqtl.RData
+</td>
+<td style="text-align:left;">
+data/hic_eqtl.RData
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreee6a63b8f63ca2efa2f426cfb043fe1fbaef31981targetblanke6a63b8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/e6a63b8f63ca2efa2f426cfb043fe1fbaef31981" target="_blank">e6a63b8</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreee6a63b8f63ca2efa2f426cfb043fe1fbaef31981targetblanke6a63b8a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/e6a63b8f63ca2efa2f426cfb043fe1fbaef31981" target="_blank">e6a63b8</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/add_hic_feature.Rmd
+    Untracked:  analysis/train_add_hic.RData
+    Untracked:  data/hic_eqtl.RData
+    Untracked:  data/train_add_hic.RData
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/hic_raw.Rmd</code>) and HTML (<code>docs/hic_raw.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/e6a63b8f63ca2efa2f426cfb043fe1fbaef31981/analysis/hic_raw.Rmd" target="_blank">e6a63b8</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-08-05
+</td>
+<td>
+wflow_publish(“analysis/hic_raw.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="description" class="section level2">
+<h2>Description:</h2>
+<p>This file is to merge the HiC cutoff5.txt file with the eqtl file.</p>
+<pre class="r"><code>HiC = read.delim2(&#39;/Users/nicholeyang/Desktop/Rotation2/data/phic/PCHiC_peak_matrix_cutoff5.txt&#39;, 
+                  header = TRUE, sep=&quot;\t&quot;, quote = &#39;&#39;)</code></pre>
+<pre class="r"><code>head(HiC)</code></pre>
+<pre><code>  baitChr baitStart baitEnd baitID                 baitName oeChr oeStart
+1       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1  850619
+2       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1  874082
+3       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1  889424
+4       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1  903641
+5       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1 1206874
+6       1    831895  848168    218 RP11-54O7.16;RP11-54O7.1     1 1239426
+    oeEnd oeID                                       oeName   dist
+1  874081  220                AL645608.1;RP11-54O7.3;SAMD11  22319
+2  876091  221                                            .  35055
+3  903640  223                         KLHL17;NOC2L;PLEKHN1  56501
+4  927394  224                             C1orf170;PLEKHN1  75486
+5 1212438  254                          RP5-902P8.10;UBE2J2 369625
+6 1278099  257 ACAP3;CPSF3L;GLTPD1;PUSL1;RP5-890O3.9;TAS1R3 418731
+                 Mon             Mac0              Mac1              Mac2
+1   25.5465679105014 23.1552423883082  37.5487280828996  34.2516228390872
+2   1.93228468639624 2.56439166855171  3.35832960953219  5.71781390625809
+3   4.92356508877905 4.10863780276095  7.95191424258896  6.67100364028254
+4   5.05024811682171 4.46056127181517  7.55274568483025  5.76434097597794
+5   3.95344923709904 3.05342972692307   5.9266242722129    4.150801828427
+6 0.0609499671511617 2.05386132479862 0.618138347628004 0.913792765770951
+                Neu                 MK               EP              Ery
+1  28.2293866333124   25.4329063090307 36.9483228692508 30.4394201689412
+2 0.610967942588545   1.58881606916046  3.4487280264009  1.8719919279133
+3  1.17403563535694   4.10809950944708  5.5704135517231 3.20890617277731
+4  1.38086678794133   3.26110508356071 5.31446634983579  4.7459001438327
+5 0.705195645656159   1.92373630753447 4.26918359263104 1.51009840710612
+6  1.62371231175963 0.0954144429114292 5.31410964122625 2.40994217190278
+               FoeT              nCD4             tCD4              aCD4
+1  13.4832147246969  11.8032695872144 26.7897908943447  11.2517812208312
+2 0.887231881369446 0.459330395938111 1.95896718272313 0.459132392236852
+3   1.9950819605042  2.80478364273435 5.39252321200808  2.57999302089654
+4  2.12365103441838  3.18449816361427 4.80853619861617  3.61682722105978
+5 0.728922297712605  2.30806186405942 2.47644450627396  3.53054817303909
+6 0.972473318644208  2.07557541736959 1.63463813746841  2.64461892923435
+              naCD4              nCD8             tCD8                 nB
+1  13.0243895499638  20.7260360866038 20.4969874759968   14.1596546965918
+2 0.808471646512836 0.985252844172257 1.44004824617697  0.399504574732776
+3   4.1352263052192  3.69829715449806 3.03941508666268   1.30051276658696
+4  2.56785725673803  8.14891311290246 5.26392207249727   2.85027486343664
+5  4.26835821053397  3.59765758511374 1.96913723097127   2.16256176269305
+6  1.31022047951012  0.26139793916709 1.07865712506174 0.0908178611310335
+                 tB clusterID clusterPostProb
+1  14.8452299904824        19           0.995
+2 0.892454696469067        33           0.979
+3  2.79496716119577        32           0.973
+4  4.66582085120164        21           0.505
+5  3.60529888022249        32           0.828
+6  1.93304679521667        34           0.312</code></pre>
+<pre class="r"><code>dim(HiC)[1]</code></pre>
+<pre><code>[1] 728838</code></pre>
+</div>
+<div id="load-the-converted-file" class="section level2">
+<h2>load the converted file</h2>
+<pre class="r"><code>snps = read.csv(&quot;/Users/nicholeyang/Desktop/Rotation2/data/hglft_genome_38to19.bed&quot;, header = FALSE)
+snp38 = read.csv(&#39;/Users/nicholeyang/Desktop/Rotation2/data/snps.txt&#39;, header = FALSE)
+
+x = strsplit(as.character(snps$V1), &#39;-&#39;)
+x2 = unlist(lapply(x, function(y) y[1]))
+
+snp_info = strsplit(x2, &#39;:&#39;)
+
+chr = unlist(lapply(snp_info, function(x) x[1]))
+start = unlist(lapply(snp_info, function(x) x[2]))
+
+dat_snp = data.frame(cbind(chr, start, as.character(snp38$V1)))
+colnames(dat_snp) = c(&#39;chr&#39;, &#39;start&#39;, &#39;loc_38map&#39;)</code></pre>
+<pre class="r"><code>head(dat_snp)</code></pre>
+<pre><code>   chr     start                loc_38map
+1 chr1 100643730 chr1:100178174-100178174
+2 chr1 101361178 chr1:100895622-100895622
+3 chr1  10271688   chr1:10211630-10211630
+4 chr1 104097685 chr1:103555063-103555063
+5 chr1 108588372 chr1:108045750-108045750
+6 chr1 108742123 chr1:108199501-108199501</code></pre>
+<pre class="r"><code>dat_snp$chr = gsub(&#39;\\D&#39;,&#39;&#39;, dat_snp$chr)
+dat_snp$start = as.numeric(as.character(dat_snp$start))
+
+
+
+
+index_list = c()
+index = which((HiC$oeChr == dat_snp$chr[1]) &amp; (HiC$oeStart &lt; dat_snp$start[1]) &amp; (HiC$oeEnd &gt; dat_snp$start[1]))
+
+df_snps = apply(dat_snp[1, ], 2, function(co) rep(co, each = length(index)))
+index_list = c(index_list, index)
+
+
+
+for(i in 2:dim(dat_snp)[1]){
+  
+  index = which((HiC$oeChr == dat_snp$chr[i]) &amp; (HiC$oeStart &lt; dat_snp$start[i]) &amp; (HiC$oeEnd &gt; dat_snp$start[i]))
+  index_list = c(index_list, index)
+  snps = apply(dat_snp[i, ], 2, function(co) rep(co, each = length(index)))
+  df_snps = rbind(df_snps, snps)
+}</code></pre>
+<pre class="r"><code>hic_eqtl = cbind(df_snps, HiC[index_list, ])
+
+row.names(hic_eqtl) = seq(1:dim(hic_eqtl)[1])
+
+save(hic_eqtl, file = &#39;/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/hic_eqtl.RData&#39;)</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.3 (2020-02-29)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Catalina 10.15.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_1.6.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.4      rprojroot_1.3-2 digest_0.6.25   later_1.0.0    
+ [5] R6_2.4.1        backports_1.1.5 git2r_0.26.1    magrittr_1.5   
+ [9] evaluate_0.14   highr_0.8       stringi_1.4.6   rlang_0.4.5    
+[13] fs_1.3.2        promises_1.1.0  whisker_0.4     rmarkdown_2.1  
+[17] tools_3.6.3     stringr_1.4.0   glue_1.3.2      httpuv_1.5.2   
+[21] xfun_0.12       yaml_2.2.1      compiler_3.6.3  htmltools_0.4.0
+[25] knitr_1.28     </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
