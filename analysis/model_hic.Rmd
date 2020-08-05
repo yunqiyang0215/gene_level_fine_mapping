@@ -1,0 +1,35 @@
+---
+title: "model hic"
+author: "Yunqi Yang"
+date: "8/5/2020"
+output: html_document
+---
+
+```{r  }
+
+load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RData")
+
+```
+
+
+## by varaible logistic regression 
+
+```{r  }
+
+head(dat_add_hic)
+
+
+```
+
+### only Mac1 and Mac2 features are not significant 
+```{r  }
+
+for (i  in 11: 27){
+  fit = glm( dat_add_hic$y ~ dat_add_hic[, i],  family = "binomial")
+  print(summary(fit))
+}
+
+```
+
+
+
