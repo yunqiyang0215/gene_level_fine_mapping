@@ -527,16 +527,16 @@ data/train_add_hic.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed0ad5a2375b02abb856e39ccd90c3dc1700ec31btargetblankd0ad5a2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d0ad5a2375b02abb856e39ccd90c3dc1700ec31b" target="_blank">d0ad5a2</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreee85eacc2216f611f5b8205fefbe56be513ddbfdctargetblanke85eacca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/e85eacc2216f611f5b8205fefbe56be513ddbfdc" target="_blank">e85eacc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed0ad5a2375b02abb856e39ccd90c3dc1700ec31btargetblankd0ad5a2a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreee85eacc2216f611f5b8205fefbe56be513ddbfdctargetblanke85eacca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d0ad5a2375b02abb856e39ccd90c3dc1700ec31b" target="_blank">d0ad5a2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/e85eacc2216f611f5b8205fefbe56be513ddbfdc" target="_blank">e85eacc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -546,11 +546,14 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/train_add_hic.RData
     Untracked:  data/hic_eqtl.RData
     Untracked:  data/train_add_hic.RData
+
+Unstaged changes:
+    Modified:   analysis/model_hic.Rmd
 
 </code></pre>
 <p>
@@ -594,6 +597,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/e85eacc2216f611f5b8205fefbe56be513ddbfdc/analysis/add_hic_feature.Rmd" target="_blank">e85eacc</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-08-05
+</td>
+<td>
+wflow_publish(“analysis/add_hic_feature.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/yunqiyang0215/gene_level_fine_mapping/d74427c1191745a5e6d9ae6ab5cfa02a0fd27cc4/docs/add_hic_feature.html" target="_blank">d74427c</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-08-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/d0ad5a2375b02abb856e39ccd90c3dc1700ec31b/analysis/add_hic_feature.Rmd" target="_blank">d0ad5a2</a>
 </td>
 <td>
@@ -616,9 +653,60 @@ wflow_publish(“analysis/add_hic_feature.Rmd”)
 <div id="prepare-for-hic-feature" class="section level2">
 <h2>prepare for HiC feature</h2>
 <pre class="r"><code>load(&quot;/Users/nicholeyang/Desktop/Rotation2/data/hic_eqtl.RData&quot;)</code></pre>
-<pre class="r"><code>hic_eqtl2 = hic_eqtl[!is.na(hic_eqtl$baitName), ]
+<pre class="r"><code>head(hic_eqtl)</code></pre>
+<pre><code>        chr     start                loc_38map baitChr baitStart   baitEnd
+df_snps   1 100643730 chr1:100178174-100178174       1 100713369 100722257
+X2        1 101361178 chr1:100895622-100895622       1  87379937  87381019
+X2.1      1 101361178 chr1:100895622-100895622       1  95536274  95538845
+X2.2      1 101361178 chr1:100895622-100895622       1  98385116  98389489
+X2.3      1 101361178 chr1:100895622-100895622       1 100231938 100238252
+X2.4      1 101361178 chr1:100895622-100895622       1 100249523 100251737
+        baitID          baitName oeChr   oeStart     oeEnd  oeID        oeName
+df_snps  27326 DBT;RP11-305E17.4     1 100634352 100646989 27306        LRRC39
+X2       23051      HS2ST1;SEP15     1 101360898 101363055 27516 EXTL2;SLC30A7
+X2.1     25596             ALG14     1 101360898 101363055 27516 EXTL2;SLC30A7
+X2.2     26553              DPYD     1 101360898 101363055 27516 EXTL2;SLC30A7
+X2.3     27180             FRRS1     1 101360898 101363055 27516 EXTL2;SLC30A7
+X2.4     27182          RNU4-75P     1 101360898 101363055 27516 EXTL2;SLC30A7
+            dist              Mon              Mac0             Mac1
+df_snps   -77142 1.34843055599415  1.78921772839366 1.99634719222292
+X2      13981499                0                 0                0
+X2.1     5824417                0 0.465695547029591                0
+X2.2     2974674                0 0.926519775296238 2.52224939360564
+X2.3     1126882 2.89316496564785  10.7618511038685  6.6110787600356
+X2.4     1111347 2.24744093217506  9.70507665907856 5.92291542638399
+                    Mac2              Neu               MK               EP
+df_snps 3.84121648347469  6.6419009785134 3.04135339426089 1.34115496917577
+X2                     0                0                0                0
+X2.1                   0                0                0                0
+X2.2    1.84838858472344                0                0                0
+X2.3    8.87116886614274                0 7.36660394659741                0
+X2.4    5.21110811135408 3.27608835168057 5.65619485450452 1.37318289845971
+                     Ery              FoeT             nCD4              tCD4
+df_snps 5.67015582143414  3.05676235556647 2.93116627100789  2.82620900824891
+X2                     0  5.98672074531884 7.64738754701126   3.7619497300554
+X2.1                   0                 0 1.13980263210717                 0
+X2.2                   0  7.01735672371564 7.02105829238459  5.33996347469841
+X2.3    9.60222489674592  1.19872663945268 2.40955754341805 0.883580083863637
+X2.4    6.76819441601615 0.229785161823062 6.13067570692578  8.16139741483703
+                     aCD4            naCD4             nCD8             tCD8
+df_snps  3.01147313782106 3.19101824842048 2.20595105037866 2.19621256112425
+X2       6.72053163467254 9.91922157469345                0  7.5966163534812
+X2.1    0.394818585888307 2.69464062510513 5.03898592801291 3.93778263870396
+X2.2     3.47660053737806 7.32439411893241 3.95130982543128 3.52920996524329
+X2.3     1.19474781222933  1.4353267284434 2.03706000977369 2.20463021502093
+X2.4     4.97039210529628 3.84760946495465 5.48068559290623  4.8540590419425
+                       nB               tB clusterID clusterPostProb
+df_snps  4.13498913605023 5.24561817997031         7           0.815
+X2                      0                0        10           0.999
+X2.1                    0                0        10           0.912
+X2.2    0.350167329501555 1.75640180174979        10           0.812
+X2.3     2.30542223744791 3.47593895897212        32           0.854
+X2.4     9.79918042442615 4.92540990098449        21           0.866</code></pre>
+<pre class="r"><code>## remove NA genes
+hic_eqtl2 = hic_eqtl[!is.na(hic_eqtl$baitName), ]
 
-
+## split those with several bait genes 
 bait_gene = strsplit(as.character(hic_eqtl2$baitName), &#39;;&#39;)
 ngenes = lapply(bait_gene, function(x) length(x))
 
@@ -639,50 +727,36 @@ hic_eqtl3$bait_gene = unlist(bait_gene)</code></pre>
 dat = rbind(train_pos_all, train_neg_all)
 NAs = apply(dat, 1, function(x) sum(is.na(x)))
 dat = dat[NAs == 0, ]</code></pre>
-<pre class="r"><code>var_loc = strsplit(as.character(dat$variant_id), &#39;_&#39;)
-dat$snp_loc38 =  paste(unlist(lapply(var_loc, function(x) x[1])), unlist(lapply(var_loc, function(x) x[2])), sep = &#39;:&#39;)</code></pre>
-<pre class="r"><code>var_loc = strsplit(as.character(hic_eqtl3$loc_38map), &#39;-&#39;)
+<pre class="r"><code>## add variable snp_loc38 to training data 
+var_loc = strsplit(as.character(dat$variant_id), &#39;_&#39;)
+dat$snp_loc38 =  paste(unlist(lapply(var_loc, function(x) x[1])), unlist(lapply(var_loc, function(x) x[2])), sep = &#39;:&#39;)
+
+## add variable snp_loc38 to hic_eqtl3
+var_loc = strsplit(as.character(hic_eqtl3$loc_38map), &#39;-&#39;)
 hic_eqtl3$snp_loc38 = unlist(lapply(var_loc, function(x) x[1]))</code></pre>
 </div>
-<div id="merge-the-previous-training-data-and-the-hic-feature" class="section level2">
-<h2>merge the previous training data and the hic feature</h2>
-<pre class="r"><code>## restrict to coding gene
-coding_gene_list = read.table(&#39;/Users/nicholeyang/Desktop/Rotation2/data/coding_gene_list.txt&#39;, header = TRUE)
+<div id="restrict-hic_eqtl-to-coding-genes" class="section level2">
+<h2>restrict hic_eqtl to coding genes</h2>
+<pre class="r"><code>coding_gene_list = read.table(&#39;/Users/nicholeyang/Desktop/Rotation2/data/coding_gene_list.txt&#39;, header = TRUE)
 
-coding_gene_list$bait_gene = coding_gene_list$Approved_symbol
-hic_eqtl4 = merge(coding_gene_list, hic_eqtl3, by = &#39;bait_gene&#39;, all = FALSE)
-
-colnames(hic_eqtl4)[1] = &#39;gene_name&#39;</code></pre>
-<pre class="r"><code>tail(dat)</code></pre>
-<pre><code>       gene_name            variant_id UTR5 UTR3 exon intron upstream
-121265    SEC61B chr9_99153605_C_T_b38    0    0    0      0        0
-49988    GALNT12 chr9_99153605_C_T_b38    0    0    0      0        0
-4837        ALG2 chr9_99153605_C_T_b38    0    0    0      0        0
-49602     GABBR2 chr9_99153605_C_T_b38    0    0    0      0        0
-6225       ANKS6 chr9_99153605_C_T_b38    0    0    0      0        0
-28348    COL15A1 chr9_99153605_C_T_b38    0    0    0      0        0
-       tss_dist_to_snp y     snp_loc38
-121265           68696 0 chr9:99153605
-49988           345906 0 chr9:99153605
-4837             67535 0 chr9:99153605
-49602           444408 0 chr9:99153605
-6225            357066 0 chr9:99153605
-28348           209966 0 chr9:99153605</code></pre>
+coding_gene_list$gene_name = coding_gene_list$Approved_symbol
+hic_eqtl3$gene_name = hic_eqtl3$bait_gene
+hic_eqtl4 = merge(coding_gene_list, hic_eqtl3, by = &#39;gene_name&#39;, all = FALSE)</code></pre>
+<pre class="r"><code>dim(hic_eqtl4)[1]</code></pre>
+<pre><code>[1] 18776</code></pre>
 </div>
-<div id="check-if-any-training-gene-snp-pairs-in-the-hic-data-250-gene-snp-pairs-are-in-the-positive-set." class="section level2">
-<h2>check if any training gene-snp pairs in the hic data: ~250 gene-snp pairs are in the positive set.</h2>
-<p>Among all the gene-snp pairs, ~9500 hic features are added.</p>
+<div id="add-hic-annotations-to-eqtl-gene-snp-pairs" class="section level2">
+<h2>add HiC annotations to eqtl gene-snp pairs</h2>
 <pre class="r"><code>index_in_hic = c()
 
-
 for(i in 1:dim(dat)[1]){
-  
   index = which(dat[i, ]$gene_name == hic_eqtl4$gene_name &amp; dat[i, ]$snp_loc38 == hic_eqtl4$snp_loc38)
   index_in_hic = c(index_in_hic, index)
 }
 
-
-train_hic = hic_eqtl4[index_in_hic, c(&quot;gene_name&quot;, &quot;Mon&quot;, &quot;Mac0&quot;, &quot;Mac1&quot;,  &quot;Mac2&quot;, &quot;Neu&quot;,
+length(index_in_hic)</code></pre>
+<pre><code>[1] 9452</code></pre>
+<pre class="r"><code>train_hic = hic_eqtl4[index_in_hic, c(&quot;gene_name&quot;, &quot;Mon&quot;, &quot;Mac0&quot;, &quot;Mac1&quot;,  &quot;Mac2&quot;, &quot;Neu&quot;,
                                          &quot;MK&quot;, &quot;EP&quot;, &quot;Ery&quot;, &quot;FoeT&quot;, &quot;nCD4&quot;, &quot;tCD4&quot;, &quot;aCD4&quot;,          
                                          &quot;naCD4&quot;, &quot;nCD8&quot;, &quot;tCD8&quot;, &quot;nB&quot;, &quot;tB&quot;,&quot;snp_loc38&quot;)]
 
@@ -705,16 +779,12 @@ Nas</code></pre>
 <pre class="r"><code>## replace NAs with 0
 dat_add_hic[is.na(dat_add_hic)] &lt;- 0</code></pre>
 <pre class="r"><code>## binary the hic features
-
 cols = c(&quot;Mon&quot;, &quot;Mac0&quot;, &quot;Mac1&quot;,  &quot;Mac2&quot;, &quot;Neu&quot;, &quot;MK&quot;, &quot;EP&quot;, &quot;Ery&quot;, &quot;FoeT&quot;,
          &quot;nCD4&quot;, &quot;tCD4&quot;, &quot;aCD4&quot;, &quot;naCD4&quot;, &quot;nCD8&quot;, &quot;tCD8&quot;, &quot;nB&quot;, &quot;tB&quot;)
 
 
 for( i in 1:length(cols)){
-  
-  dat_add_hic[, cols[i]] = ifelse(as.numeric(as.character(dat_add_hic[, cols[i]])) &gt;=5, 1, 0)
-  
-  
+  dat_add_hic[, cols[i]] = ifelse(as.numeric(as.character(dat_add_hic[, cols[i]])) &gt;5, 1, 0)
 }
 
 save(dat_add_hic, file = &#39;/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RData&#39;)</code></pre>
