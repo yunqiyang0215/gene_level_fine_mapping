@@ -17,9 +17,17 @@ load("/Users/nicholeyang/Desktop/Rotation2/data/hic_eqtl.RData")
 
 ```{r  }
 
+head(hic_eqtl)
+
+
+```
+
+```{r  }
+
+## remove NA genes
 hic_eqtl2 = hic_eqtl[!is.na(hic_eqtl$baitName), ]
 
-
+## split those with several bait genes 
 bait_gene = strsplit(as.character(hic_eqtl2$baitName), ';')
 ngenes = lapply(bait_gene, function(x) length(x))
 
@@ -49,52 +57,53 @@ dat = dat[NAs == 0, ]
 
 
 ```{r  }
+
+## add variable snp_loc38 to training data 
 var_loc = strsplit(as.character(dat$variant_id), '_')
 dat$snp_loc38 =  paste(unlist(lapply(var_loc, function(x) x[1])), unlist(lapply(var_loc, function(x) x[2])), sep = ':')
-```
 
-
-```{r }
-
+## add variable snp_loc38 to hic_eqtl3
 var_loc = strsplit(as.character(hic_eqtl3$loc_38map), '-')
 hic_eqtl3$snp_loc38 = unlist(lapply(var_loc, function(x) x[1]))
 
 ```
 
 
-## merge the previous training data and the hic feature 
+## restrict hic_eqtl to coding genes
 ```{r  }
 
-## restrict to coding gene
 coding_gene_list = read.table('/Users/nicholeyang/Desktop/Rotation2/data/coding_gene_list.txt', header = TRUE)
 
-coding_gene_list$bait_gene = coding_gene_list$Approved_symbol
-hic_eqtl4 = merge(coding_gene_list, hic_eqtl3, by = 'bait_gene', all = FALSE)
+coding_gene_list$gene_name = coding_gene_list$Approved_symbol
+hic_eqtl3$gene_name = hic_eqtl3$bait_gene
+hic_eqtl4 = merge(coding_gene_list, hic_eqtl3, by = 'gene_name', all = FALSE)
 
-colnames(hic_eqtl4)[1] = 'gene_name'
 ```
-
 
 ```{r  }
 
-tail(dat)
+dim(hic_eqtl4)[1]
+
 ```
 
 
-## check if any training gene-snp pairs in the hic data: ~250 gene-snp pairs are in the positive set. 
 
-Among all the gene-snp pairs, ~9500 hic features are added. 
+## add HiC annotations to eqtl gene-snp pairs 
+
 ```{r  }
 
 index_in_hic = c()
 
-
 for(i in 1:dim(dat)[1]){
-  
   index = which(dat[i, ]$gene_name == hic_eqtl4$gene_name & dat[i, ]$snp_loc38 == hic_eqtl4$snp_loc38)
   index_in_hic = c(index_in_hic, index)
 }
 
+length(index_in_hic)
+
+```
+
+```{r  }
 
 train_hic = hic_eqtl4[index_in_hic, c("gene_name", "Mon", "Mac0", "Mac1",  "Mac2", "Neu",
                                          "MK", "EP", "Ery", "FoeT", "nCD4", "tCD4", "aCD4",          
@@ -117,16 +126,12 @@ dat_add_hic[is.na(dat_add_hic)] <- 0
 ```{r  }
 
 ## binary the hic features
-
 cols = c("Mon", "Mac0", "Mac1",  "Mac2", "Neu", "MK", "EP", "Ery", "FoeT",
          "nCD4", "tCD4", "aCD4", "naCD4", "nCD8", "tCD8", "nB", "tB")
 
 
 for( i in 1:length(cols)){
-  
-  dat_add_hic[, cols[i]] = ifelse(as.numeric(as.character(dat_add_hic[, cols[i]])) >=5, 1, 0)
-  
-  
+  dat_add_hic[, cols[i]] = ifelse(as.numeric(as.character(dat_add_hic[, cols[i]])) >5, 1, 0)
 }
 
 save(dat_add_hic, file = '/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RData')
