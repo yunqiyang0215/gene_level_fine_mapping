@@ -12,7 +12,7 @@ load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RDat
 ```
 
 
-## by varaible logistic regression 
+## data summary 
 
 ```{r  }
 
@@ -21,7 +21,50 @@ head(dat_add_hic)
 
 ```
 
-### only Mac1 and Mac2 features are not significant 
+```{r  }
+
+hist(dat_add_hic$tss_dist_to_snp)
+
+```
+
+
+```{r  }
+
+range(dat_add_hic$tss_dist_to_snp)
+
+
+```
+
+
+
+## plot the proportion of features in the positive/negative set
+```{r  }
+
+dist_range = c(0, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6)
+
+for (i in 1:6){
+  
+  par(mfrow = c(1,2))
+  
+  sub_dat = dat_add_hic[dat_add_hic$tss_dist_to_snp %in% seq(dist_range[i], dist_range[i+1], by = 1), ]
+
+  # proportion of features in the positive set
+  tot_count = apply(sub_dat[sub_dat$y==1, c(11:27)], 2, function(x) sum(x == 1))
+  barplot(tot_count/dim(sub_dat[sub_dat$y==1, ])[1], las = 2, main = paste('positive set', dist_range[i], dist_range[i+1], sep = ':'))
+
+  # proportion of features in the negative set
+  tot_count = apply(sub_dat[sub_dat$y==0, c(11:27)], 2, function(x) sum(x == 1))
+  barplot(tot_count/dim(sub_dat[sub_dat$y==0, ])[1], las = 2, 
+          main = paste('negative set', dist_range[i], dist_range[i+1], sep = ':'))
+  
+}
+
+```
+
+
+## by varaible logistic regression 
+
+only Mac1 and Mac2 features are not significant 
 ```{r  }
 
 for (i  in 11: 27){
