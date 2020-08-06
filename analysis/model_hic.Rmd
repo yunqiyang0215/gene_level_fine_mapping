@@ -27,6 +27,17 @@ hist(dat_add_hic$tss_dist_to_snp)
 
 ```
 
+```{r  }
+
+hist(dat_add_hic$tss_dist_to_snp[dat_add_hic$y==1], breaks = 20,  xlab = 'positive', main = '')
+
+hist(dat_add_hic$tss_dist_to_snp[dat_add_hic$y==0], breaks = 20, xlab = 'negative', main = '')
+
+
+```
+
+
+
 
 ```{r  }
 
