@@ -13,17 +13,15 @@ load("/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RDat
 
 
 ## data summary 
-
 ```{r  }
 
 head(dat_add_hic)
-
 
 ```
 
 ```{r  }
 
-hist(dat_add_hic$tss_dist_to_snp)
+hist(dat_add_hic$tss_dist_to_snp, xlab = 'distance between tss and snp', main = 'Histogram on all data')
 
 ```
 
@@ -37,23 +35,104 @@ hist(dat_add_hic$tss_dist_to_snp[dat_add_hic$y==0], breaks = 20, xlab = 'negativ
 ```
 
 
+```{r  }
+
+range(dat_add_hic$tss_dist_to_snp)
+range(dat_add_hic$tss_dist_to_snp[dat_add_hic$y == 1])
+
+```
+
+## unify the HiC feature
+```{r  }
+
+hic = apply(dat_add_hic[, c(11:27)], 1, sum)
+dat_add_hic$hic = ifelse(hic>0, 1, 0)
+
+```
 
 
 ```{r  }
 
-range(dat_add_hic$tss_dist_to_snp)
+sub_dat = dat_add_hic[dat_add_hic$y == 1, ]
+prop_hic_pos = sum(sub_dat$hic == 1)/dim(sub_dat)[1]
+
+sub_dat = dat_add_hic[dat_add_hic$y == 0, ]
+prop_hic_neg = sum(sub_dat$hic == 1)/dim(sub_dat)[1]
+
+```
+
+```{r  }
+
+prop_hic_pos
+prop_hic_neg
+
+```
+
+
+## by distance hic signature summary
+
+```{r  }
+
+dist_range = c(0, 1e4, 5e4, 1e5, 3e6)
+prop_pos = rep(NA, length(dist_range)-1)
+prop_neg = rep(NA, length(dist_range)-1)
+
+
+for (i in 1:(length(dist_range)-1)){
+  
+  sub_dat = dat_add_hic[dat_add_hic$tss_dist_to_snp %in% seq(dist_range[i], dist_range[i+1], by = 1), ]
+  
+  dat_pos = sub_dat[sub_dat$y == 1, ]
+  dat_neg = sub_dat[sub_dat$y == 0, ]
+  
+  prop_pos[i] = sum(dat_pos$hic == 1)/dim(dat_pos)[1]
+  prop_neg[i] = sum(dat_neg$hic == 1)/dim(dat_neg)[1]
+}
+
+```
+
+
+```{r  }
+
+plot(prop_pos, type = 'b', ylim = c(0, 0.3), ylab = 'proportions')
+points(prop_neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1)
+
+```
+
+
+```{r  }
+
+cat_tss_dist_pos = cut(dat_add_hic[dat_add_hic$y==1, ]$tss_dist_to_snp, breaks = dist_range)
+cat_tss_dist_neg = cut(dat_add_hic[dat_add_hic$y==0, ]$tss_dist_to_snp, breaks = dist_range)
+
+table(cat_tss_dist_pos)
+table(cat_tss_dist_neg)
+
+```
+
+
+## regress unified HiC feature
+```{r  }
+
+
+fit1 = glm(y ~ hic, data = dat_add_hic, family = "binomial")
+fit2 = glm(y ~ hic + tss_dist_to_snp + hic*tss_dist_to_snp, data =dat_add_hic, family = "binomial")
+fit3 = glm(y ~ hic , data =dat_add_hic[dat_add_hic$tss_dist_to_snp> 5e4, ], family = "binomial")
+
+summary(fit1)
+summary(fit2)
+summary(fit3)
+
 
 
 ```
 
 
-
 ## plot the proportion of features in the positive/negative set
 ```{r  }
 
-dist_range = c(0, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6)
-
-for (i in 1:6){
+for (i in 1:(length(dist_range)-1)){
   
   par(mfrow = c(1,2))
   
@@ -73,17 +152,15 @@ for (i in 1:6){
 ```
 
 
-## by varaible logistic regression 
-
-only Mac1 and Mac2 features are not significant 
+# one variable logistic regression by range
 ```{r  }
 
+sub_dat = dat_add_hic[dat_add_hic$tss_dist_to_snp > 5e4, ]
 for (i  in 11: 27){
-  fit = glm( dat_add_hic$y ~ dat_add_hic[, i],  family = "binomial")
+  fit = glm(sub_dat$y ~ sub_dat[, i],  family = "binomial")
   print(summary(fit))
 }
 
+
 ```
-
-
 
