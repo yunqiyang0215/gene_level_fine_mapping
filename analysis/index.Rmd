@@ -23,3 +23,5 @@ Welcome to my research website. Follow the links below to browse the results.
 + [Add HiC feature to training data](add_hic_feature.html)
 
 + [Model HiC data](model_hic.html)
+
++ [Model ATAC data](model_atac.html)
