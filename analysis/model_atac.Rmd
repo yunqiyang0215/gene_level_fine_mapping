@@ -1,0 +1,64 @@
+---
+title: "model_atac"
+author: "Yunqi Yang"
+date: "8/11/2020"
+output: html_document
+---
+
+```{r  }
+
+load('/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData')
+
+```
+
+
+```{r  }
+
+head(train_all_sig)
+
+```
+
+## direct regress correlation on y  
+```{r  }
+
+fit = glm(y ~ correlation, data = train_all_sig, family = "binomial")
+summary(fit)
+
+```
+
+## Try different threshold and make it binary
+
+```{r  }
+
+threshold = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+prop_pos = rep(NA, length(threshold))
+prop_neg = rep(NA, length(threshold))
+
+for (i in 1:length(threshold)){
+  
+  train_all_sig$atac = ifelse(train_all_sig$correlation > threshold[i], 1, 0)
+  
+  dat_pos = train_all_sig[train_all_sig$y == 1, ]
+  dat_neg = train_all_sig[train_all_sig$y == 0, ]
+  
+  prop_pos[i] = sum(dat_pos$atac == 1)/dim(dat_pos)[1]
+  prop_neg[i] = sum(dat_neg$atac == 1)/dim(dat_neg)[1]
+  
+  fit = glm(y ~ atac, data = train_all_sig, family = "binomial")
+  print(summary(fit))
+  
+}
+
+
+```
+
+
+## plot the proprotion of atac features using different threshold 
+```{r  }
+
+plot(threshold, prop_pos, type = 'b', ylab = 'proportion')
+points(threshold, prop_neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1)
+
+
+```
