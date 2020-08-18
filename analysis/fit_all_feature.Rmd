@@ -1,0 +1,188 @@
+---
+title: "model_all_feature"
+author: "Yunqi Yang"
+date: "8/18/2020"
+output: html_document
+---
+
+```{r  }
+
+library(ggplot2)
+library(dplyr)
+require(PRROC)
+```
+
+
+
+```{r  }
+
+load('/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData')
+head(train_all_sig)
+
+```
+
+
+## process HiC feature
+```{r  }
+
+# create unified HiC feature
+hic = apply(train_all_sig[, c(11:27)], 1, sum)
+train_all_sig$hic = ifelse(hic>0, 1, 0)
+
+# add interaction term based on distance
+train_all_sig$hic_dist1 = ifelse(train_all_sig$hic>0 & train_all_sig$tss_dist_to_snp < 5e4, 1, 0)
+train_all_sig$hic_dist2 = ifelse(train_all_sig$hic>0 & train_all_sig$tss_dist_to_snp > 5e4 & train_all_sig$tss_dist_to_snp < 1e5, 1, 0)
+train_all_sig$hic_dist3 = ifelse(train_all_sig$hic>0 & train_all_sig$tss_dist_to_snp > 1e5, 1, 0)
+
+```
+
+
+## process ATAC feature
+```{r  }
+
+train_all_sig$atac = ifelse(train_all_sig$correlation > 0.5, 1, 0)
+
+
+```
+
+## transform tss_dist_to_snp, use exponential decay: exp(-d/sigma)
+```{r  }
+
+sigma = 1e5
+train_all_sig$weight = exp(-train_all_sig$tss_dist_to_snp/sigma)
+
+```
+
+
+# split data and fit models
+
+```{r  }
+
+# split data in the same way
+set.seed(1)
+n = dim(train_all_sig)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = train_all_sig[indx, ]
+test = train_all_sig[-indx, ]
+
+
+```
+
+
+## before adding HiC and ATAC 
+```{r  }
+
+# fit model and evaluate performance
+fit1 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight, data = train, family = "binomial")
+summary(fit1)
+
+
+pred.probs=predict(fit1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+## after adding HiC and ATAC 
+```{r  }
+
+# fit model and evaluate performance
+fit2 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight + hic_dist1 + hic_dist2 + hic_dist3 + atac, data = train, family = "binomial")
+summary(fit2)
+
+
+pred.probs=predict(fit2,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+```{r  }
+
+# fit model and evaluate performance
+fit3 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight + hic + atac, data = train, family = "binomial")
+summary(fit3)
+
+
+pred.probs=predict(fit3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+```{r  }
+
+# fit model and evaluate performance
+fit4 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight*hic + atac, data = train, family = "binomial")
+summary(fit4)
+
+
+pred.probs=predict(fit4,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
