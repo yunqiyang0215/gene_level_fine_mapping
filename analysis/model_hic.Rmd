@@ -112,6 +112,18 @@ table(cat_tss_dist_neg)
 ```
 
 
+```{r  }
+
+# more refined range
+cat_tss_dist_pos = cut(dat_add_hic[dat_add_hic$y==1, ]$tss_dist_to_snp, breaks = c(0, 1e4, 5e4, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6))
+cat_tss_dist_neg = cut(dat_add_hic[dat_add_hic$y==0, ]$tss_dist_to_snp, breaks = c(0, 1e4, 5e4, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6))
+
+table(cat_tss_dist_pos)
+table(cat_tss_dist_neg)
+
+```
+
+
 ## regress unified HiC feature
 ```{r  }
 
