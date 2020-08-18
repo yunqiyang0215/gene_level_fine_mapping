@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Yunqi Yang" />
+
+
+<title>model_all_feature</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">gene-level fine mapping</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">model_all_feature</h1>
+<h4 class="author">Yunqi Yang</h4>
+<h4 class="date">8/18/2020</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-08-18
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>gene_level_fine_mapping/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200622code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200622)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200622code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200622)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongabsolute"> <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> <strong>File paths:</strong> absolute </a>
+</p>
+</div>
+<div id="strongFilepathsstrongabsolute" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Using absolute paths to the files within your workflowr project makes it difficult for you and others to run your code on a different machine. Change the absolute path(s) below to the suggested relative path(s) to make your code more reproducible.
+</p>
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th style="text-align:left;">
+absolute
+</th>
+<th style="text-align:left;">
+relative
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData
+</td>
+<td style="text-align:left;">
+data/train_all.RData
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtree6d17ffc0791fa374879202c57daa1855b6df559atargetblank6d17ffca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/6d17ffc0791fa374879202c57daa1855b6df559a" target="_blank">6d17ffc</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtree6d17ffc0791fa374879202c57daa1855b6df559atargetblank6d17ffca" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/6d17ffc0791fa374879202c57daa1855b6df559a" target="_blank">6d17ffc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.RData
+    Ignored:    analysis/.Rhistory
+
+Untracked files:
+    Untracked:  analysis/atac_eqtl.Rmd
+    Untracked:  data/hic_eqtl.RData
+    Untracked:  data/train_add_hic.RData
+    Untracked:  data/train_all.RData
+
+Unstaged changes:
+    Modified:   analysis/add_hic_feature.Rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/fit_all_feature.Rmd</code>) and HTML (<code>docs/fit_all_feature.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/6d17ffc0791fa374879202c57daa1855b6df559a/analysis/fit_all_feature.Rmd" target="_blank">6d17ffc</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-08-18
+</td>
+<td>
+wflow_publish(“analysis/fit_all_feature.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>require(PRROC)</code></pre>
+<pre><code>Loading required package: PRROC</code></pre>
+<pre class="r"><code>load(&#39;/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData&#39;)
+head(train_all_sig)</code></pre>
+<pre><code>  gene_name      snp_loc38             variant_id UTR5 UTR3 exon intron
+1      A1BG chr19:57866502 chr19_57866502_T_C_b38    0    0    0      0
+2      A1BG chr19:58059544 chr19_58059544_T_G_b38    0    0    0      0
+3      A1BG chr19:58170494 chr19_58170494_G_T_b38    0    0    0      0
+4      A1BG chr19:58228973 chr19_58228973_T_G_b38    0    0    0      0
+5      A1BG chr19:58330182 chr19_58330182_C_T_b38    0    0    0      0
+6      A1BG chr19:58359927 chr19_58359927_G_A_b38    0    0    0      0
+  upstream tss_dist_to_snp y Mon Mac0 Mac1 Mac2 Neu MK EP Ery FoeT nCD4 tCD4
+1        0          481132 0   0    0    0    0   0  0  0   0    0    0    0
+2        0          288090 0   0    0    0    0   0  0  0   0    0    0    0
+3        0          177140 0   0    0    0    0   0  0  0   0    0    0    0
+4        0          118661 0   0    0    0    0   0  0  0   0    0    0    0
+5        0           17452 1   0    0    0    0   0  0  0   0    0    0    0
+6        0            6428 1   0    0    0    0   0  0  0   0    0    0    0
+  aCD4 naCD4 nCD8 tCD8 nB tB correlation
+1    0     0    0    0  0  0           0
+2    0     0    0    0  0  0           0
+3    0     0    0    0  0  0           0
+4    0     0    0    0  0  0           0
+5    0     0    0    0  0  0           0
+6    0     0    0    0  0  0           0</code></pre>
+<div id="process-hic-feature" class="section level2">
+<h2>process HiC feature</h2>
+<pre class="r"><code># create unified HiC feature
+hic = apply(train_all_sig[, c(11:27)], 1, sum)
+train_all_sig$hic = ifelse(hic&gt;0, 1, 0)
+
+# add interaction term based on distance
+train_all_sig$hic_dist1 = ifelse(train_all_sig$hic&gt;0 &amp; train_all_sig$tss_dist_to_snp &lt; 5e4, 1, 0)
+train_all_sig$hic_dist2 = ifelse(train_all_sig$hic&gt;0 &amp; train_all_sig$tss_dist_to_snp &gt; 5e4 &amp; train_all_sig$tss_dist_to_snp &lt; 1e5, 1, 0)
+train_all_sig$hic_dist3 = ifelse(train_all_sig$hic&gt;0 &amp; train_all_sig$tss_dist_to_snp &gt; 1e5, 1, 0)</code></pre>
+</div>
+<div id="process-atac-feature" class="section level2">
+<h2>process ATAC feature</h2>
+<pre class="r"><code>train_all_sig$atac = ifelse(train_all_sig$correlation &gt; 0.5, 1, 0)</code></pre>
+</div>
+<div id="transform-tss_dist_to_snp-use-exponential-decay-exp-dsigma" class="section level2">
+<h2>transform tss_dist_to_snp, use exponential decay: exp(-d/sigma)</h2>
+<pre class="r"><code>sigma = 1e5
+train_all_sig$weight = exp(-train_all_sig$tss_dist_to_snp/sigma)</code></pre>
+</div>
+<div id="split-data-and-fit-models" class="section level1">
+<h1>split data and fit models</h1>
+<pre class="r"><code># split data in the same way
+set.seed(1)
+n = dim(train_all_sig)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = train_all_sig[indx, ]
+test = train_all_sig[-indx, ]</code></pre>
+<div id="before-adding-hic-and-atac" class="section level2">
+<h2>before adding HiC and ATAC</h2>
+<pre class="r"><code># fit model and evaluate performance
+fit1 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight, data = train, family = &quot;binomial&quot;)
+summary(fit1)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ UTR5 + UTR3 + intron + upstream + exon + weight, 
+    family = &quot;binomial&quot;, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4294  -0.1205  -0.0617  -0.0513   3.6728  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -6.74430    0.10582 -63.733  &lt; 2e-16 ***
+UTR5         3.18811    0.21524  14.812  &lt; 2e-16 ***
+UTR3         1.64574    0.21529   7.644  2.1e-14 ***
+intron       3.09218    0.09313  33.203  &lt; 2e-16 ***
+upstream     3.22812    0.18851  17.124  &lt; 2e-16 ***
+exon         3.64875    0.28856  12.645  &lt; 2e-16 ***
+weight       5.99642    0.13693  43.791  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 19460.5  on 44304  degrees of freedom
+Residual deviance:  7409.4  on 44298  degrees of freedom
+AIC: 7423.4
+
+Number of Fisher Scoring iterations: 8</code></pre>
+<pre class="r"><code>pred.probs=predict(fit1,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 20703   488
+       1   149   812</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="after-adding-hic-and-atac" class="section level2">
+<h2>after adding HiC and ATAC</h2>
+<pre class="r"><code># fit model and evaluate performance
+fit2 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight + hic_dist1 + hic_dist2 + hic_dist3 + atac, data = train, family = &quot;binomial&quot;)
+summary(fit2)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ UTR5 + UTR3 + intron + upstream + exon + weight + 
+    hic_dist1 + hic_dist2 + hic_dist3 + atac, family = &quot;binomial&quot;, 
+    data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4880  -0.1210  -0.0616  -0.0500   3.6922  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -6.81573    0.11508 -59.226  &lt; 2e-16 ***
+UTR5         3.12431    0.21598  14.465  &lt; 2e-16 ***
+UTR3         1.68061    0.21592   7.784 7.05e-15 ***
+intron       3.08143    0.09334  33.012  &lt; 2e-16 ***
+upstream     3.16131    0.18929  16.701  &lt; 2e-16 ***
+exon         3.65713    0.28967  12.625  &lt; 2e-16 ***
+weight       6.06381    0.14656  41.374  &lt; 2e-16 ***
+hic_dist1   -0.23850    0.12405  -1.923   0.0545 .  
+hic_dist2    0.32256    0.19664   1.640   0.1009    
+hic_dist3    0.18278    0.26650   0.686   0.4928    
+atac         0.56209    0.13369   4.204 2.62e-05 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 19460.5  on 44304  degrees of freedom
+Residual deviance:  7385.5  on 44294  degrees of freedom
+AIC: 7407.5
+
+Number of Fisher Scoring iterations: 8</code></pre>
+<pre class="r"><code>pred.probs=predict(fit2,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 20704   489
+       1   148   811</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># fit model and evaluate performance
+fit3 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight + hic + atac, data = train, family = &quot;binomial&quot;)
+summary(fit3)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ UTR5 + UTR3 + intron + upstream + exon + weight + 
+    hic + atac, family = &quot;binomial&quot;, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4828  -0.1200  -0.0623  -0.0513   3.6727  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -6.74369    0.10778 -62.570  &lt; 2e-16 ***
+UTR5         3.14405    0.21569  14.577  &lt; 2e-16 ***
+UTR3         1.67370    0.21541   7.770 7.85e-15 ***
+intron       3.07916    0.09329  33.006  &lt; 2e-16 ***
+upstream     3.17839    0.18906  16.811  &lt; 2e-16 ***
+exon         3.65627    0.28894  12.654  &lt; 2e-16 ***
+weight       5.96852    0.13729  43.475  &lt; 2e-16 ***
+hic         -0.07324    0.10195  -0.718    0.473    
+atac         0.56601    0.13373   4.233 2.31e-05 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 19460.5  on 44304  degrees of freedom
+Residual deviance:  7391.8  on 44296  degrees of freedom
+AIC: 7409.8
+
+Number of Fisher Scoring iterations: 8</code></pre>
+<pre class="r"><code>pred.probs=predict(fit3,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 20701   489
+       1   151   811</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># fit model and evaluate performance
+fit4 = glm(y ~ UTR5 + UTR3 + intron + upstream + exon + weight*hic + atac, data = train, family = &quot;binomial&quot;)
+summary(fit4)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ UTR5 + UTR3 + intron + upstream + exon + weight * 
+    hic + atac, family = &quot;binomial&quot;, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.4907  -0.1220  -0.0637  -0.0496   3.6960  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -6.82962    0.11678 -58.485  &lt; 2e-16 ***
+UTR5         3.12113    0.21602  14.449  &lt; 2e-16 ***
+UTR3         1.67787    0.21577   7.776 7.47e-15 ***
+intron       3.08069    0.09335  33.001  &lt; 2e-16 ***
+upstream     3.16095    0.18949  16.682  &lt; 2e-16 ***
+exon         3.65877    0.28976  12.627  &lt; 2e-16 ***
+weight       6.08206    0.14868  40.908  &lt; 2e-16 ***
+hic          0.52205    0.27600   1.891   0.0586 .  
+atac         0.56422    0.13359   4.224 2.40e-05 ***
+weight:hic  -0.87175    0.38400  -2.270   0.0232 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 19460.5  on 44304  degrees of freedom
+Residual deviance:  7386.9  on 44295  degrees of freedom
+AIC: 7406.9
+
+Number of Fisher Scoring iterations: 8</code></pre>
+<pre class="r"><code>pred.probs=predict(fit4,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 20702   489
+       1   150   811</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/fit_all_feature.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.3 (2020-02-29)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Catalina 10.15.5
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] PRROC_1.3.1     dplyr_0.8.5     ggplot2_3.3.0   workflowr_1.6.1
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.4       compiler_3.6.3   pillar_1.4.3     later_1.0.0     
+ [5] git2r_0.26.1     highr_0.8        tools_3.6.3      digest_0.6.25   
+ [9] evaluate_0.14    lifecycle_0.2.0  tibble_3.0.1     gtable_0.3.0    
+[13] pkgconfig_2.0.3  rlang_0.4.5      rstudioapi_0.11  yaml_2.2.1      
+[17] xfun_0.12        withr_2.1.2      stringr_1.4.0    knitr_1.28      
+[21] fs_1.3.2         vctrs_0.2.4      rprojroot_1.3-2  grid_3.6.3      
+[25] tidyselect_1.0.0 glue_1.3.2       R6_2.4.1         rmarkdown_2.1   
+[29] purrr_0.3.3      magrittr_1.5     whisker_0.4      backports_1.1.5 
+[33] scales_1.1.0     promises_1.1.0   htmltools_0.4.0  ellipsis_0.3.0  
+[37] assertthat_0.2.1 colorspace_1.4-1 httpuv_1.5.2     stringi_1.4.6   
+[41] munsell_0.5.0    crayon_1.3.4    </code></pre>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
