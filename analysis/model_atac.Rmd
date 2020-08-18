@@ -18,16 +18,41 @@ head(train_all_sig)
 
 ```
 
-## direct regress correlation on y  
+
+## correlation by distance
+
+Comment: ATAC features are mostly concentrated in the range < 5e5. 
 ```{r  }
 
-fit = glm(y ~ correlation, data = train_all_sig, family = "binomial")
-summary(fit)
+par(mfrow = c(1,2))
+plot(train_all_sig$tss_dist_to_snp, train_all_sig$correlation, xlab = 'distance', ylab = 'correlation')
+
+plot(train_all_sig[train_all_sig$correlation>0.4, ]$tss_dist_to_snp, train_all_sig[train_all_sig$correlation>0.4, ]$correlation, xlab = 'distance', ylab = 'correlation')
 
 ```
 
-## Try different threshold and make it binary
 
+## direct regress correlation on y  
+
+Complete separation? 
+
+https://courses.ms.ut.ee/MTMS.01.011/2018_spring/uploads/Main/GLM_slides_7_binary_response_ii.pdf
+
+```{r  }
+
+fit1 = glm(y ~ correlation, data = train_all_sig, family = "binomial")
+fit2 = glm(y ~ correlation + tss_dist_to_snp, data = train_all_sig, family = "binomial")
+
+summary(fit1)
+summary(fit2)
+
+
+#plot(fit1$fitted.values)
+#plot(fit2$fitted.values)
+```
+
+
+## Try different threshold and make it binary
 ```{r  }
 
 threshold = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
@@ -54,11 +79,91 @@ for (i in 1:length(threshold)){
 
 
 ## plot the proprotion of atac features using different threshold 
+
+Comment: shouldn't use a too stringent threshold. Maybe 0.5-0.8. 
+
+```{r  }
+
+prop_pos
+prop_neg
+prop_pos/prop_neg
+
+prop_pos * dim(dat_pos)[1]
+prop_neg * dim(dat_neg)[1]
+
+```
+
+
 ```{r  }
 
 plot(threshold, prop_pos, type = 'b', ylab = 'proportion')
 points(threshold, prop_neg, type = 'b', col = 'red')
 legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1)
 
+
+```
+
+
+
+## summary the binary feature by distance 
+
+Comment: seems that when the distance is more close, the ATAC feature is more abundant. 
+```{r  }
+
+summary_by_dist = function(cor_threshold, dist_range){
+  
+  train_all_sig$atac = ifelse(train_all_sig$correlation > cor_threshold, 1, 0)
+  
+  prop_pos_by_dist = rep(NA, length(dist_range)-1)
+  prop_neg_by_dist = rep(NA, length(dist_range)-1)
+  
+  
+  for (i in 1:(length(dist_range)-1)){
+    sub_dat = train_all_sig[train_all_sig$tss_dist_to_snp %in% seq(dist_range[i], dist_range[i+1], by = 1), ]
+    sub_pos = sub_dat[sub_dat$y == 1, ]
+    sub_neg = sub_dat[sub_dat$y == 0, ]
+  
+    prop_pos_by_dist[i] = sum(sub_pos$atac == 1)/dim(sub_pos)[1]
+    prop_neg_by_dist[i] = sum(sub_neg$atac == 1)/dim(sub_neg)[1]
+  }
+  return(list(pos = prop_pos_by_dist, neg = prop_neg_by_dist))
+}
+
+```
+
+```{r  }
+
+res1 = summary_by_dist(0.5, dist_range = c(0, 1e4, 5e4, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6))
+res2 = summary_by_dist(0.8, dist_range = c(0, 1e4, 5e4, 1e5, 2e5, 3e5, 4e5, 5e5, 3e6))
+
+par(mfrow = c(1,2))
+plot(res1$pos, type = 'b', ylab = 'proportion', main = 'threshold=0.5')
+points(res1$neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1, cex = 0.6)
+
+
+plot(res2$pos, type = 'b', ylab = 'proportion', main = 'threshold=0.8')
+points(res2$neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1, cex = 0.6)
+
+```
+
+
+
+
+```{r  }
+
+res1 = summary_by_dist(0.5, dist_range = c(0, 1e4, 5e4, 1e5, 3e6))
+res2 = summary_by_dist(0.8, dist_range = c(0, 1e4, 5e4, 1e5, 3e6))
+
+par(mfrow = c(1,2))
+plot(res1$pos, type = 'b', ylab = 'proportion', ylim = c(0, 0.15),  main = 'threshold=0.5')
+points(res1$neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1, cex = 0.6)
+
+
+plot(res2$pos, type = 'b', ylab = 'proportion', ylim = c(0, 0.03), main = 'threshold=0.8')
+points(res2$neg, type = 'b', col = 'red')
+legend('topright', legend =  c('positive', 'negative'), col = c('black', 'red'), lty = 1, cex = 0.6)
 
 ```
