@@ -5,7 +5,7 @@ date: "8/20/2020"
 output: html_document
 ---
 
-# Description: model the distal observations, tss_dist_to_snp > 100kb 
+## Description: model the distal observations, tss_dist_to_snp > 100kb 
 ```{r  }
 
 library(ggplot2)
