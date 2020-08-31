@@ -1,0 +1,139 @@
+---
+title: "distal_feature"
+author: "Yunqi Yang"
+date: "8/20/2020"
+output: html_document
+---
+
+# Description: model the distal observations, tss_dist_to_snp > 100kb 
+```{r  }
+
+library(ggplot2)
+library(dplyr)
+require(PRROC)
+
+```
+
+
+```{r  }
+
+load('/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData')
+head(train_all_sig)
+
+```
+
+## process all features
+```{r  }
+
+# create unified HiC feature
+hic = apply(train_all_sig[, c(11:27)], 1, sum)
+train_all_sig$hic = ifelse(hic>0, 1, 0)
+
+# ATAC data
+train_all_sig$atac = ifelse(train_all_sig$correlation > 0.5, 1, 0)
+
+# transform tss_dist_to_snp into weights 
+sigma = 1e5
+train_all_sig$weight = exp(-train_all_sig$tss_dist_to_snp/sigma)
+
+```
+
+```{r  }
+
+dat = train_all_sig[train_all_sig$tss_dist_to_snp > 1e5, ]
+
+sum(dat$y == 1)
+sum(dat$y == 0)
+
+```
+
+## Create a training/test set
+```{r  }
+
+set.seed(215)
+
+n = dim(dat)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat[indx, ]
+test = dat[-indx, ]
+
+sum(train$y == 1)
+```
+
+
+## fit1: model only contains weight 
+```{r  }
+
+fit1 = glm(y ~ weight, data = train, family = "binomial")
+summary(fit1)
+
+pred.probs=predict(fit1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+
+```
+
+```{r  }
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+```
+
+
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+## fit2: model contains HiC and ATAC 
+```{r  }
+
+fit2 = glm(y ~ weight + hic + atac, data = train, family = "binomial")
+summary(fit2)
+
+pred.probs=predict(fit2,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+glm.pred[pred.probs>0.5]= 1
+```
+
+
+```{r  }
+
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+
+
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+
+
