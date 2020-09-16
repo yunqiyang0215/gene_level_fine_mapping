@@ -1,5 +1,5 @@
 ---
-title: "distal_feature"
+title: "distal_feature_filtered"
 author: "Yunqi Yang"
 date: "8/20/2020"
 output: html_document
