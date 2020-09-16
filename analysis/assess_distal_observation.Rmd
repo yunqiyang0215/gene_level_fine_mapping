@@ -13,11 +13,13 @@ output: html_document
 
 3. If adding all other functional features, including exon, intron,..., that improve the classification performance. The accuracy is still not high, $9/49\approx0.184$.
 
-4. The important question here: 
+4. The important questions here: 
 
 (1). why we couldn't classify distal observations well?
 
 (2). why intron/exon(features in closer range) better than distal features? 
+
+The problem of the eQTL data? The problem of the HiC ATAC feature data?
 
 
 ## Possible next step:
