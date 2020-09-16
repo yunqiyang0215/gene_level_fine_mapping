@@ -1,0 +1,235 @@
+---
+title: "distal_feature"
+author: "Yunqi Yang"
+date: "8/20/2020"
+output: html_document
+---
+
+## Description: 
+
+1. Narrow down to SNPs that are present in the positive dataset. 
+
+2. HiC and ATAC start to show some predictive power, a little bit better than the null model. 
+
+
+
+```{r  }
+
+library(ggplot2)
+library(dplyr)
+require(PRROC)
+
+```
+
+
+```{r  }
+
+load('/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData')
+head(train_all_sig)
+
+```
+
+## process all features
+```{r  }
+
+# create unified HiC feature
+hic = apply(train_all_sig[, c(11:27)], 1, sum)
+train_all_sig$hic = ifelse(hic>0, 1, 0)
+
+# ATAC data
+train_all_sig$atac = ifelse(train_all_sig$correlation > 0.5, 1, 0)
+
+# transform tss_dist_to_snp into weights 
+sigma = 1e5
+train_all_sig$weight = exp(-train_all_sig$tss_dist_to_snp/sigma)
+
+```
+
+```{r  }
+
+# filter to dataset with tss_dist_to_snp > 1e5
+dat = train_all_sig[train_all_sig$tss_dist_to_snp > 1e5, ]
+
+# positive snp list
+positive_snp_list = unique(dat$variant_id[dat$y == 1])
+positive_snp_list = as.character(positive_snp_list)
+
+# filter to SNPs with positive pairs 
+selected_obs = rep(NA, dim(dat)[1])
+for (i in 1:dim(dat)[1]){
+  selected_obs[i] = ifelse(dat$variant_id[i] %in% positive_snp_list, 1, 0)
+}
+
+dat2 = dat[selected_obs == 1, ]
+dim(dat2)[1]
+
+```
+
+## Create a training/test set
+```{r  }
+
+set.seed(215)
+
+n = dim(dat2)[1]
+indx = sample(1:n, round(2*n/3), replace = FALSE)
+train = dat2[indx, ]
+test = dat2[-indx, ]
+
+sum(train$y == 1)
+```
+
+## fit0: fit the null model 
+```{r  }
+
+fit0 = glm(y ~ 1, data = train, family = "binomial")
+summary(fit0)
+
+pred.probs=predict(fit0,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+## all predicted to be negative 
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+
+
+```
+
+
+## fit1: model HiC and ATAC 
+```{r  }
+
+fit1 = glm(y ~ hic + atac, data = train, family = "binomial")
+summary(fit1)
+
+pred.probs=predict(fit1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+## all predicted to be negative 
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+
+```{r  }
+
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+
+
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+## fit2: model contains all of the features 
+```{r  }
+
+fit1 = glm(y ~ exon + UTR5 + UTR3 + intron + upstream + hic + atac, data = train, family = "binomial")
+summary(fit1)
+
+pred.probs=predict(fit1,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+
+## all predicted to be negative
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+```
+
+
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+
+
+
+
+
+
+
+## fit3: model without UTR5 and UTR3
+```{r  }
+
+fit3 = glm(y ~ exon + intron + upstream + hic + atac, data = train, family = "binomial")
+summary(fit3)
+
+pred.probs=predict(fit3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+
+## all predicted to be negative
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+```
+
+
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+
+
+
+
