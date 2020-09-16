@@ -61,16 +61,19 @@ sum(train$y == 1)
 ```
 
 
-## fit1: model only contains weight 
+## fit1: model contains weight + most of the features 
 ```{r  }
 
-fit1 = glm(y ~ weight, data = train, family = "binomial")
+fit1 = glm(y ~ weight + exon + UTR5 + UTR3+ intron+ upstream, data = train, family = "binomial")
 summary(fit1)
 
 pred.probs=predict(fit1,test,type="response")
 glm.pred = rep(0, length(pred.probs))
-glm.pred[pred.probs>0.5]= 1
 
+
+## all predicted to be negative
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
 ```
 
 ```{r  }
@@ -97,15 +100,97 @@ plot(pr)
 ```
 
 
-## fit2: model contains HiC and ATAC 
+
+## fit2: model contains weight + exon
 ```{r  }
 
-fit2 = glm(y ~ weight + hic + atac, data = train, family = "binomial")
+fit2 = glm(y ~ weight + exon, data = train, family = "binomial")
 summary(fit2)
 
 pred.probs=predict(fit2,test,type="response")
 glm.pred = rep(0, length(pred.probs))
+
+
+## all predicted to be negative
 glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+```
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+
+
+## fit3: model only contains weight
+```{r  }
+
+fit3 = glm(y ~ weight, data = train, family = "binomial")
+summary(fit3)
+
+pred.probs=predict(fit3,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+
+## all predicted to be negative
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
+```
+
+```{r  }
+# prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy 
+```
+
+
+
+```{r  }
+
+fg <- pred.probs[test$y == 1]
+bg <- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc <- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)
+
+# PR Curve
+pr <- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)
+
+```
+
+
+## fit4: model contains weight, HiC and ATAC 
+```{r  }
+
+fit4 = glm(y ~ weight + hic + atac, data = train, family = "binomial")
+summary(fit2)
+
+pred.probs=predict(fit4,test,type="response")
+glm.pred = rep(0, length(pred.probs))
+
+## all predicted to be negative 
+glm.pred[pred.probs>0.5]= 1
+table(glm.pred, test$y)
 ```
 
 
