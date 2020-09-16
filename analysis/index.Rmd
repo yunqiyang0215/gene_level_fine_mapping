@@ -29,3 +29,5 @@ Welcome to my research website. Follow the links below to browse the results.
 + [Model all features](fit_all_feature.html)
 
 + [Assess only distal observations](assess_distal_observation.html)
+
++ [Assess only distal observations,filtered](assess_distal_observation_filtered.html)
