@@ -12,7 +12,7 @@
 <meta name="author" content="Yunqi Yang" />
 
 
-<title>distal_feature</title>
+<title>distal_feature_filtered</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -377,7 +377,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">distal_feature</h1>
+<h1 class="title toc-ignore">distal_feature_filtered</h1>
 <h4 class="author">Yunqi Yang</h4>
 <h4 class="date">8/20/2020</h4>
 
@@ -519,16 +519,16 @@ data/train_all.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreeebec31b1b7cecce47dbde8b94a0a210118e43018targetblankebec31ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/ebec31b1b7cecce47dbde8b94a0a210118e43018" target="_blank">ebec31b</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed1f16bee023617a01c0dccde8efc1710b4d3e4fftargetblankd1f16bea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d1f16bee023617a01c0dccde8efc1710b4d3e4ff" target="_blank">d1f16be</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreeebec31b1b7cecce47dbde8b94a0a210118e43018targetblankebec31ba" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed1f16bee023617a01c0dccde8efc1710b4d3e4fftargetblankd1f16bea" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/ebec31b1b7cecce47dbde8b94a0a210118e43018" target="_blank">ebec31b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d1f16bee023617a01c0dccde8efc1710b4d3e4ff" target="_blank">d1f16be</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -590,6 +590,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/d1f16bee023617a01c0dccde8efc1710b4d3e4ff/analysis/assess_distal_observation_filtered.Rmd" target="_blank">d1f16be</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+<td>
+wflow_publish(“analysis/assess_distal_observation_filtered.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/yunqiyang0215/gene_level_fine_mapping/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/assess_distal_observation_filtered.html" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -784,10 +818,84 @@ bg &lt;- pred.probs[test$y== 0]
 roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(roc)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-10-1.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># PR Curve
 pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(pr)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-2">
+Past versions of unnamed-chunk-10-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-10-2.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fit2-model-contains-all-of-the-features" class="section level2">
 <h2>fit2: model contains all of the features</h2>
@@ -844,10 +952,84 @@ bg &lt;- pred.probs[test$y== 0]
 roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(roc)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-13-1.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># PR Curve
 pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(pr)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-2">
+Past versions of unnamed-chunk-13-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-13-2.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="fit3-model-without-utr5-and-utr3" class="section level2">
 <h2>fit3: model without UTR5 and UTR3</h2>
@@ -902,10 +1084,84 @@ bg &lt;- pred.probs[test$y== 0]
 roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(roc)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-16-1.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># PR Curve
 pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
 plot(pr)</code></pre>
 <p><img src="figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-2">
+Past versions of unnamed-chunk-16-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/dc44faaf9147b60c05440fc6df5bda40628b45f2/docs/figure/assess_distal_observation_filtered.Rmd/unnamed-chunk-16-2.png" target="_blank">dc44faa</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
