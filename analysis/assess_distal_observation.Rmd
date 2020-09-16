@@ -183,7 +183,7 @@ plot(pr)
 ```{r  }
 
 fit4 = glm(y ~ weight + hic + atac, data = train, family = "binomial")
-summary(fit2)
+summary(fit4)
 
 pred.probs=predict(fit4,test,type="response")
 glm.pred = rep(0, length(pred.probs))
