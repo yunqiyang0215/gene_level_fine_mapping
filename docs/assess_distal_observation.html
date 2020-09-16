@@ -404,7 +404,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-31
+<strong>Last updated:</strong> 2020-09-16
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 1
@@ -519,16 +519,16 @@ data/train_all.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreea1876787a54bd8ed54ec8d3b3508a6191860841ftargetblanka187678a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/a1876787a54bd8ed54ec8d3b3508a6191860841f" target="_blank">a187678</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreeb1e3ea350b717e1fcecf6bed61244b29d3293354targetblankb1e3ea3a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/b1e3ea350b717e1fcecf6bed61244b29d3293354" target="_blank">b1e3ea3</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreea1876787a54bd8ed54ec8d3b3508a6191860841ftargetblanka187678a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreeb1e3ea350b717e1fcecf6bed61244b29d3293354targetblankb1e3ea3a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/a1876787a54bd8ed54ec8d3b3508a6191860841f" target="_blank">a187678</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/b1e3ea350b717e1fcecf6bed61244b29d3293354" target="_blank">b1e3ea3</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -550,7 +550,6 @@ Untracked files:
 
 Unstaged changes:
     Modified:   analysis/add_hic_feature.Rmd
-    Modified:   analysis/index.Rmd
 
 </code></pre>
 <p>
@@ -589,6 +588,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/b1e3ea350b717e1fcecf6bed61244b29d3293354/analysis/assess_distal_observation.Rmd" target="_blank">b1e3ea3</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+<td>
+wflow_publish(“analysis/assess_distal_observation.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/yunqiyang0215/gene_level_fine_mapping/1d0f053481ac43cd37ba6460f288d8945f896715/docs/assess_distal_observation.html" target="_blank">1d0f053</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-08-31
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -733,39 +766,53 @@ test = dat[-indx, ]
 sum(train$y == 1)</code></pre>
 <pre><code>[1] 97</code></pre>
 </div>
-<div id="fit1-model-only-contains-weight" class="section level2">
-<h2>fit1: model only contains weight</h2>
-<pre class="r"><code>fit1 = glm(y ~ weight, data = train, family = &quot;binomial&quot;)
+<div id="fit1-model-contains-weight-most-of-the-features" class="section level2">
+<h2>fit1: model contains weight + most of the features</h2>
+<pre class="r"><code>fit1 = glm(y ~ weight + exon + UTR5 + UTR3+ intron+ upstream, data = train, family = &quot;binomial&quot;)
 summary(fit1)</code></pre>
 <pre><code>
 Call:
-glm(formula = y ~ weight, family = &quot;binomial&quot;, data = train)
+glm(formula = y ~ weight + exon + UTR5 + UTR3 + intron + upstream, 
+    family = &quot;binomial&quot;, data = train)
 
 Deviance Residuals: 
     Min       1Q   Median       3Q      Max  
--0.1640  -0.0808  -0.0608  -0.0546   3.6389  
+-1.8093  -0.0680  -0.0545  -0.0500   3.6803  
 
 Coefficients:
             Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept)  -6.6200     0.1768 -37.433  &lt; 2e-16 ***
-weight        6.3019     0.8532   7.386 1.51e-13 ***
+(Intercept)  -6.7714     0.1884 -35.938  &lt; 2e-16 ***
+weight        4.9461     0.9517   5.197 2.02e-07 ***
+exon          7.2503     1.1756   6.167 6.95e-10 ***
+UTR5          5.4269     1.2719   4.267 1.98e-05 ***
+UTR3          5.6461     0.8176   6.906 4.98e-12 ***
+intron        5.8104     0.3403  17.072  &lt; 2e-16 ***
+upstream      5.5072     1.2500   4.406 1.05e-05 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
     Null deviance: 1321.3  on 32433  degrees of freedom
-Residual deviance: 1271.1  on 32432  degrees of freedom
-AIC: 1275.1
+Residual deviance: 1019.5  on 32427  degrees of freedom
+AIC: 1033.5
 
 Number of Fisher Scoring iterations: 9</code></pre>
 <pre class="r"><code>pred.probs=predict(fit1,test,type=&quot;response&quot;)
 glm.pred = rep(0, length(pred.probs))
-glm.pred[pred.probs&gt;0.5]= 1</code></pre>
+
+
+## all predicted to be negative
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 16162    40
+       1     6     9</code></pre>
 <pre class="r"><code># prediction accuracy
 accuracy = sum(glm.pred == test$y)/length(test$y)
 accuracy </code></pre>
-<pre><code>[1] 0.9969785</code></pre>
+<pre><code>[1] 0.9971635</code></pre>
 <pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
 bg &lt;- pred.probs[test$y== 0]
 
@@ -852,41 +899,48 @@ yunqiyang0215
 </div>
 </div>
 </div>
-<div id="fit2-model-contains-hic-and-atac" class="section level2">
-<h2>fit2: model contains HiC and ATAC</h2>
-<pre class="r"><code>fit2 = glm(y ~ weight + hic + atac, data = train, family = &quot;binomial&quot;)
+<div id="fit2-model-contains-weight-exon" class="section level2">
+<h2>fit2: model contains weight + exon</h2>
+<pre class="r"><code>fit2 = glm(y ~ weight + exon, data = train, family = &quot;binomial&quot;)
 summary(fit2)</code></pre>
 <pre><code>
 Call:
-glm(formula = y ~ weight + hic + atac, family = &quot;binomial&quot;, data = train)
+glm(formula = y ~ weight + exon, family = &quot;binomial&quot;, data = train)
 
 Deviance Residuals: 
     Min       1Q   Median       3Q      Max  
--0.2994  -0.0809  -0.0591  -0.0527   3.6589  
+-1.8546  -0.0794  -0.0596  -0.0534   3.6508  
 
 Coefficients:
             Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept) -6.69306    0.18309 -36.557  &lt; 2e-16 ***
-weight       6.32761    0.86039   7.354 1.92e-13 ***
-hic         -0.01067    0.27603  -0.039  0.96915    
-atac         1.31793    0.35309   3.733  0.00019 ***
+(Intercept)  -6.6632     0.1801 -36.994  &lt; 2e-16 ***
+weight        6.3711     0.8650   7.365 1.77e-13 ***
+exon          6.9730     1.1844   5.887 3.93e-09 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 (Dispersion parameter for binomial family taken to be 1)
 
     Null deviance: 1321.3  on 32433  degrees of freedom
-Residual deviance: 1261.1  on 32430  degrees of freedom
-AIC: 1269.1
+Residual deviance: 1240.8  on 32431  degrees of freedom
+AIC: 1246.8
 
 Number of Fisher Scoring iterations: 9</code></pre>
 <pre class="r"><code>pred.probs=predict(fit2,test,type=&quot;response&quot;)
 glm.pred = rep(0, length(pred.probs))
-glm.pred[pred.probs&gt;0.5]= 1</code></pre>
+
+
+## all predicted to be negative
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 16167    46
+       1     1     3</code></pre>
 <pre class="r"><code># prediction accuracy
 accuracy = sum(glm.pred == test$y)/length(test$y)
 accuracy </code></pre>
-<pre><code>[1] 0.9969785</code></pre>
+<pre><code>[1] 0.9971018</code></pre>
 <pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
 bg &lt;- pred.probs[test$y== 0]
 
@@ -972,6 +1026,110 @@ yunqiyang0215
 </table>
 </div>
 </div>
+</div>
+<div id="fit3-model-only-contains-weight" class="section level2">
+<h2>fit3: model only contains weight</h2>
+<pre class="r"><code>fit3 = glm(y ~ weight, data = train, family = &quot;binomial&quot;)
+summary(fit3)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ weight, family = &quot;binomial&quot;, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.1640  -0.0808  -0.0608  -0.0546   3.6389  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -6.6200     0.1768 -37.433  &lt; 2e-16 ***
+weight        6.3019     0.8532   7.386 1.51e-13 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1321.3  on 32433  degrees of freedom
+Residual deviance: 1271.1  on 32432  degrees of freedom
+AIC: 1275.1
+
+Number of Fisher Scoring iterations: 9</code></pre>
+<pre class="r"><code>pred.probs=predict(fit3,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+
+
+## all predicted to be negative
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 16168    49</code></pre>
+<pre class="r"><code># prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy </code></pre>
+<pre><code>[1] 0.9969785</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/assess_distal_observation.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/assess_distal_observation.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="fit4-model-contains-weight-hic-and-atac" class="section level2">
+<h2>fit4: model contains weight, HiC and ATAC</h2>
+<pre class="r"><code>fit4 = glm(y ~ weight + hic + atac, data = train, family = &quot;binomial&quot;)
+summary(fit2)</code></pre>
+<pre><code>
+Call:
+glm(formula = y ~ weight + exon, family = &quot;binomial&quot;, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8546  -0.0794  -0.0596  -0.0534   3.6508  
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -6.6632     0.1801 -36.994  &lt; 2e-16 ***
+weight        6.3711     0.8650   7.365 1.77e-13 ***
+exon          6.9730     1.1844   5.887 3.93e-09 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1321.3  on 32433  degrees of freedom
+Residual deviance: 1240.8  on 32431  degrees of freedom
+AIC: 1246.8
+
+Number of Fisher Scoring iterations: 9</code></pre>
+<pre class="r"><code>pred.probs=predict(fit4,test,type=&quot;response&quot;)
+glm.pred = rep(0, length(pred.probs))
+
+## all predicted to be negative 
+glm.pred[pred.probs&gt;0.5]= 1
+table(glm.pred, test$y)</code></pre>
+<pre><code>        
+glm.pred     0     1
+       0 16168    49</code></pre>
+<pre class="r"><code># prediction accuracy
+accuracy = sum(glm.pred == test$y)/length(test$y)
+accuracy </code></pre>
+<pre><code>[1] 0.9969785</code></pre>
+<pre class="r"><code>fg &lt;- pred.probs[test$y == 1]
+bg &lt;- pred.probs[test$y== 0]
+
+# ROC Curve    
+roc &lt;- roc.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(roc)</code></pre>
+<p><img src="figure/assess_distal_observation.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># PR Curve
+pr &lt;- pr.curve(scores.class0 = fg, scores.class1 = bg, curve = T)
+plot(pr)</code></pre>
+<p><img src="figure/assess_distal_observation.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
