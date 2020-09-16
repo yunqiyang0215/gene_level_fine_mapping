@@ -27,3 +27,5 @@ Welcome to my research website. Follow the links below to browse the results.
 + [Model ATAC data](model_atac.html)
 
 + [Model all features](fit_all_feature.html)
+
++ [Assess only distal observations](assess_distal_observation.html)
