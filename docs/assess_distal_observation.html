@@ -519,16 +519,16 @@ data/train_all.RData
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed7d76a25949a180623759237ff10cedea01943bdtargetblankd7d76a2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d7d76a25949a180623759237ff10cedea01943bd" target="_blank">d7d76a2</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtree6bae65fbd916e1a518bfc320b4493ea0922f0716targetblank6bae65fa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/6bae65fbd916e1a518bfc320b4493ea0922f0716" target="_blank">6bae65f</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtreed7d76a25949a180623759237ff10cedea01943bdtargetblankd7d76a2a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomyunqiyang0215genelevelfinemappingtree6bae65fbd916e1a518bfc320b4493ea0922f0716targetblank6bae65fa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/d7d76a25949a180623759237ff10cedea01943bd" target="_blank">d7d76a2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/tree/6bae65fbd916e1a518bfc320b4493ea0922f0716" target="_blank">6bae65f</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -588,6 +588,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/yunqiyang0215/gene_level_fine_mapping/blob/6bae65fbd916e1a518bfc320b4493ea0922f0716/analysis/assess_distal_observation.Rmd" target="_blank">6bae65f</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+<td>
+wflow_publish(“analysis/assess_distal_observation.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/yunqiyang0215/gene_level_fine_mapping/d6daf14f3ea2091765d2cde45dae50544fd68ca4/docs/assess_distal_observation.html" target="_blank">d6daf14</a>
+</td>
+<td>
+yunqiyang0215
+</td>
+<td>
+2020-09-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -805,10 +839,11 @@ wflow_publish(“analysis/assess_distal_observation.Rmd”)
 <li><p>model the distal observations, tss_dist_to_snp &gt; 100kb</p></li>
 <li><p>the feature weight, HIC and ATAC have no prediction power, predict all the observations to be negative.</p></li>
 <li><p>If adding all other functional features, including exon, intron,…, that improve the classification performance. The accuracy is still not high, <span class="math inline">\(9/49\approx0.184\)</span>.</p></li>
-<li><p>The important question here:</p></li>
+<li><p>The important questions here:</p></li>
 </ol>
 <p>(1). why we couldn’t classify distal observations well?</p>
 <p>(2). why intron/exon(features in closer range) better than distal features?</p>
+<p>The problem of the eQTL data? The problem of the HiC ATAC feature data?</p>
 </div>
 <div id="possible-next-step" class="section level2">
 <h2>Possible next step:</h2>
