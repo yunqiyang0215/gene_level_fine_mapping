@@ -5,7 +5,18 @@ date: "8/20/2020"
 output: html_document
 ---
 
-## Description: model the distal observations, tss_dist_to_snp > 100kb 
+## Description: 
+
+1. model the distal observations, tss_dist_to_snp > 100kb 
+
+2. the feature weight, HIC and ATAC have no prediction power, predict all the observations to be negative. 
+
+3. If adding all other functional features, including exon, intron,..., that improve the classification performance. The the accuracy is still not high, $9/49\approx0.184$.
+
+
+
+
+
 ```{r  }
 
 library(ggplot2)
