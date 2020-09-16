@@ -11,7 +11,21 @@ output: html_document
 
 2. the feature weight, HIC and ATAC have no prediction power, predict all the observations to be negative. 
 
-3. If adding all other functional features, including exon, intron,..., that improve the classification performance. The the accuracy is still not high, $9/49\approx0.184$.
+3. If adding all other functional features, including exon, intron,..., that improve the classification performance. The accuracy is still not high, $9/49\approx0.184$.
+
+4. The important question here: 
+
+(1). why we couldn't classify distal observations well?
+
+(2). why intron/exon(features in closer range) better than distal features? 
+
+
+## Possible next step:
+
+1. Instead of using binary outcome y, do more exploratory analysis on PIP, to see if there's relationship between PIP and distance. 
+
+2. Relax eQTL PIP threshold to include more into training data. To see if distal pairs increase or not. If not, this means that eQTL couldn't capture distal gene-snp association or the calculation of PIP doesn't consider distal interaction. 
+
 
 
 
@@ -229,6 +243,16 @@ plot(pr)
 
 ```
 
+
+## More exploratory analysis:
+
+```{r  }
+
+## proportion of positive observations by distance
+sum(dat$y == 1)/dim(dat)[1]   ## distal ones 
+sum(train_all_sig$y == 1)/dim(train_all_sig)[1]
+
+```
 
 
 
