@@ -1,0 +1,106 @@
+---
+title: "tss"
+author: "Yunqi Yang"
+date: "7/10/2020"
+output: html_document
+---
+
+## add distance of snp to target gene tss 
+```{r  }
+
+tss = read.table('/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/gencode.v28.hg38.sga')
+
+# load fine-mapping positive set
+load("/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/dt_pos3.RData")
+
+load('/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/noncausal_set.RData')
+
+```
+
+
+```{r  }
+
+head(dt_pos3)
+
+```
+
+```{r  }
+
+head(neg3)
+
+```
+
+
+
+## process the tss file
+```{r  }
+
+colnames(tss) = c("organism", 'source', 'tss_position','strand','chr', 'gene_info')
+
+gene_info = strsplit(as.character(tss$gene_info), '.', fixed = TRUE)
+tss$gene_id = unlist(lapply(gene_info, function(x) x[1]))
+tss$gene_name = unlist(lapply(gene_info, function(x) x[3]))
+
+head(tss)
+```
+
+
+
+
+## merge tss file with positive snp-gene set
+
+```{r  }
+
+sub_dt3 = dt_pos3[ , c('gene_id','gene','variant_id','pip','SNP_chr','SNP_loc','gene_name','seqnames','start','end','width')]
+
+dt_tss = merge(sub_dt3, tss[, c('gene_id','gene_name','chr','tss_position','strand')], by = 'gene_name', all.x = TRUE)
+
+head(dt_tss)
+```
+
+```{r  }
+
+# find the nearest tss to the snp 
+dt_tss$dist_to_snp = abs(as.numeric(dt_tss$SNP_loc) - as.numeric(dt_tss$tss_position))
+dt_tss = dt_tss[order(dt_tss$gene_id.x, dt_tss$dist_to_snp) , ]
+
+sub_dt_tss = dt_tss[, c('gene_name', 'variant_id', 'pip', 'SNP_loc', 'strand')]
+dt_pos_add_tss = dt_tss[!duplicated(sub_dt_tss), ]
+
+head(dt_pos_add_tss)
+```
+
+```{r  }
+
+save(dt_pos_add_tss, file = '/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/dt_pos_add_tss.RData')
+
+```
+
+
+## merge tss file with negative snp-gene set
+```{r  }
+
+SNP_loc = strsplit(as.character(neg3$var_id), '_')
+neg3$SNP_loc = unlist(lapply(SNP_loc, function(x) x[2]))
+
+neg_tss = merge(neg3, tss[, c('gene_id','gene_name','chr','tss_position','strand')], by = 'gene_name', all.x = TRUE)
+```
+
+```{r  }
+
+# find the nearest tss to the snp 
+neg_tss$dist_to_snp = abs(as.numeric(neg_tss$SNP_loc) - as.numeric(neg_tss$tss_position))
+neg_tss = neg_tss[order(neg_tss$gene_id.x, neg_tss$dist_to_snp) , ]
+
+sub_neg_tss = neg_tss[, c('gene_name', 'var_id', 'SNP_loc', 'strand.x', 'seqnames')]
+dt_neg_tss = neg_tss[!duplicated(sub_neg_tss), ]
+
+head(dt_neg_tss)
+```
+
+```{r  }
+
+save(dt_neg_tss, file = '/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/dt_neg_tss.RData')
+
+```
+
