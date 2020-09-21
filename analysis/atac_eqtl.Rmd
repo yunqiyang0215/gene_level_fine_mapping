@@ -1,0 +1,118 @@
+---
+title: "ATAC_signature"
+author: "Yunqi Yang"
+date: "8/8/2020"
+output: html_document
+---
+
+```{r  }
+
+atac = readRDS('/Users/nicholeyang/Desktop/Rotation2/data/interrogation_of_hematicells_data/peakGeneCorrelation.rds')
+
+## load SNPs 
+load('/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/snp_hg19_hg38.RData')
+
+```
+
+
+```{r  }
+
+unique(atac$chr)
+length(unique(atac$gene))
+range(atac$correlation)
+
+```
+
+```{r  }
+
+head(atac)
+
+```
+
+99883795 99891794
+
+```{r  }
+
+head(dat_snp)
+
+
+```
+
+```{r  }
+
+unique(dat_snp$chr)
+
+
+```
+
+```{r  }
+
+str(atac)
+str(dat_snp)
+
+```
+
+```{r  }
+
+dat_snp$start = as.numeric(as.character(dat_snp$start))
+dat_snp$loc_38map = as.character(dat_snp$loc_38map)
+
+```
+
+
+## load training data
+```{r  }
+
+load('/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_add_hic.RData')
+
+```
+
+
+
+```{r  }
+
+## map eqtls with atac signature 
+
+snp_list = c()
+index_list = c()
+for (i in 1: dim(dat_snp)[1]){
+  
+  index = which(as.character(atac$chr) == as.character(dat_snp$chr[i]) & (atac$start < dat_snp$start[i]) & (atac$end > dat_snp$start[i]))
+  index_list = c(index_list, index)
+  
+  snp = rep(dat_snp$loc_38map[i], length(index))
+  snp_list = c(snp_list, snp)
+}
+
+```
+
+
+```{r  }
+
+snp_loc38 = unlist(lapply(strsplit(as.character(snp_list), '-'), function(x) x[1]))
+eqtl_atac = cbind(snp_loc38, atac[index_list, ])
+
+colnames(eqtl_atac)[5] = 'gene_name'
+```
+
+
+```{r  }
+
+dat_add_hic_atac = merge(dat_add_hic, eqtl_atac, by = c('gene_name', 'snp_loc38'), all.x = TRUE)
+dat_add_hic_atac2 = dat_add_hic_atac[!duplicated(dat_add_hic_atac), ]
+
+```
+
+```{r  }
+
+train_all_sig = dat_add_hic_atac2[,!(names(dat_add_hic_atac2) %in% c('chr', "start","end", 'p-value'))]
+train_all_sig[is.na(train_all_sig)] <- 0
+
+save(train_all_sig, file = '/Users/nicholeyang/Desktop/gene_level_fine_mapping/data/train_all.RData')
+```
+
+
+
+
+
+
