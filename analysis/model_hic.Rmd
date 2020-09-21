@@ -164,6 +164,31 @@ for (i in 1:(length(dist_range)-1)){
 ```
 
 
+#### Specify other distance categories: 
+
+```{r  }
+
+dist_range = c(0, 5e4, 1e5, 5e5)
+
+for (i in 1:(length(dist_range)-1)){
+  
+  par(mfrow = c(1,2))
+  
+  sub_dat = dat_add_hic[dat_add_hic$tss_dist_to_snp %in% seq(dist_range[i], dist_range[i+1], by = 1), ]
+
+  # proportion of features in the positive set
+  tot_count = apply(sub_dat[sub_dat$y==1, c(11:27)], 2, function(x) sum(x == 1))
+  barplot(tot_count/dim(sub_dat[sub_dat$y==1, ])[1], las = 2, main = paste('positive set', dist_range[i], dist_range[i+1], sep = ':'), cex.names=.7)
+
+  # proportion of features in the negative set
+  tot_count = apply(sub_dat[sub_dat$y==0, c(11:27)], 2, function(x) sum(x == 1))
+  barplot(tot_count/dim(sub_dat[sub_dat$y==0, ])[1], las = 2, 
+          main = paste('negative set', dist_range[i], dist_range[i+1], sep = ':'), cex.names=.7)
+  
+}
+
+```
+
 # one variable logistic regression by range
 ```{r  }
 
