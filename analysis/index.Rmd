@@ -17,6 +17,8 @@ Follow the links below to browse the results.
 
 + [Add tss information to data](add_tss.html)
 
++ [Merge ANNOVAR with causal set](gene_snp_annotation.html)
+
 + [Create training data](create_training_set.html)
 
 + [Model fitting](model_fitting.html)
