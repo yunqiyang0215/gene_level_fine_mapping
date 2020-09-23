@@ -1,0 +1,70 @@
+---
+title: "snp_gene_annotation"
+author: "Yunqi Yang"
+date: "7/13/2020"
+output: html_document
+---
+
+## Description: 
+
+This file is to merge ANNOVAR result with causal SNP set. 
+
+## prepare for annovar input 
+```{r  eval = FALSE}
+
+dt_pos3$alt = unlist(lapply(strsplit(dt_pos3$variant_id, '_'), function(x) x[3]))
+dt_pos3$ref = unlist(lapply(strsplit(dt_pos3$variant_id, '_'), function(x) x[4]))
+annov_input = data.frame(dt_pos3[, c('SNP_chr', 'SNP_loc','SNP_loc', 'ref', 'alt')])
+head(annov_input)
+
+write.table(annov_input, file = 'annov_input.txt', quote = FALSE, col.names = FALSE, row.names = FALSE)
+```
+
+
+## merge the snp & gene annotation 
+```{r  }
+
+annovar = read.csv("/Users/nicholeyang/Desktop/Rotation2/annovar/wblood.hg38_multianno.csv")
+load("/Users/nicholeyang/Desktop/Rotation2/gene-level fine mapping/data/dt_pos_add_tss.RData")
+```
+
+
+```{r  }
+
+annovar2 = annovar[, c('Chr', 'Start', "Func.refGene", "Gene.refGene", "GeneDetail.refGene")]
+
+```
+
+```{r  }
+
+head(dt_pos_add_tss)
+head(annovar2)
+
+```
+
+```{r  }
+
+annovar2$SNP_chr_loc = paste(annovar2$Chr, annovar2$Start, sep = '_')
+dt_pos_add_tss$SNP_chr_loc = paste(dt_pos_add_tss$SNP_chr, dt_pos_add_tss$SNP_loc, sep = '_')
+
+```
+
+```{r  }
+
+dt_merged = merge(dt_pos_add_tss, annovar2, by = 'SNP_chr_loc', all.x = TRUE)
+
+# check if merge correctly
+identical(as.integer(dt_merged$SNP_loc), dt_merged$Start)
+dt_merged2 = dt_merged[!duplicated(dt_merged), ]
+
+sub_merged = dt_merged2[, c('gene_id.x', 'gene_name', 'variant_id', 'pip', 'seqnames', 'start', 'end', 'width', 'chr', "tss_position","dist_to_snp", "Func.refGene", "Gene.refGene", "GeneDetail.refGene")]
+
+colnames(sub_merged) = c('gene_id', 'gene_name', "variant_id", "pip", 'gene_chr', "gene_start", 'gene_end', 'gene_width', 'tss_chr', 'tss_position', 'tss_dist_to_snp', 'snp_func', 'snp_refgene', 'refgene_detail')
+
+write.csv(sub_merged, file = 'dt_annov_merged.csv')
+
+```
+
+
+
+
