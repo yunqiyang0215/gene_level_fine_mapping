@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Exploratory analysis for gene-level fine-mapping"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,7 +8,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website. Follow the links below to browse the results.
+Investigations into the factors that can predict the target genes of the SNPs. 
+
+Follow the links below to browse the results.
+
 
 + [eQTL data processing](eqtl_process.html)
 
